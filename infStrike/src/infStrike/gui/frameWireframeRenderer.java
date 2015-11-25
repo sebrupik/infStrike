@@ -74,8 +74,8 @@ class wireCanvas extends JPanel implements ActionListener {
         //***********
     }
 
-
-    synchronized public void paint(Graphics g) {frameWireframeRenderer
+    // was : synchronized public void paint(Graphics g) {frameWireframeRenderer   <---- huh?!
+    synchronized public void paint(Graphics g) {
         super.paintComponent(g);  
         Dimension size = getSize();
         setBackground(Color.white);

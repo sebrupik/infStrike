@@ -19,6 +19,7 @@ import javax.swing.*;
 
 
 public class jarFinder {
+    private final String _CLASS;
     JProgressBar curPro;
     Hashtable weaponTable;
    
@@ -44,6 +45,8 @@ public class jarFinder {
         this.jarsWeapons = jarsWeapons;
         this.jarsNations = jarsNations;
         weaponTable = new Hashtable();
+        
+        this._CLASS = this.getClass().getName();
 
         this.setText("Begining JAR loading", 0.0);
         loadNationJars();
@@ -65,7 +68,7 @@ public class jarFinder {
     * passed the vector and weapon classes.
     */
     private void loadNationWeapons() {
-        this.setText("Loading weapon classes into nation files", 80.0);
+        this.setText(_CLASS+"/loadNationWeapons - Loading weapon classes into nation files", 80.0);
         Vector v;
         String tmpStr;
         String[] str = new String[5];
@@ -92,7 +95,7 @@ public class jarFinder {
     * corresponding weapon classes will be returned.
     */
     private Vector findWeaponClasses(Vector v) {
-        System.out.println("nationDatabase/findWeaponClasses - Initialising");
+        System.out.println(_CLASS+"/findWeaponClasses - Initialising");
         String str;
         Vector tmp = new Vector();
         for (int i=0; i<v.size(); i++) {
@@ -106,7 +109,7 @@ public class jarFinder {
                 }
             }
         }
-        System.out.println("nationDatabase/findWeaponClasses - Finished");
+        System.out.println(_CLASS+"/findWeaponClasses - Finished");
         return tmp;
     }
 
@@ -115,14 +118,14 @@ public class jarFinder {
 //***********************
 
     private void loadWeaponJars() {
-        System.out.println("nationDatabase2/loadWeaponJars - initialising");
+        System.out.println(_CLASS+"/loadWeaponJars - initialising");
         this.setText("Begining Weapon JAR loading", 16.0);
         File root = new File("weapons");
         jarsWeapons = new Vector();
         loadJars(root, jarsWeapons);
     }
     private void loadNationJars() {
-        System.out.println("nationDatabase2/loadNationJars - initialising");
+        System.out.println(_CLASS+"/loadNationJars - initialising");
         this.setText("Begining Nation JAR loading", 0.0);
         File root = new File("nations");
         jarsNations = new Vector();
@@ -133,7 +136,7 @@ public class jarFinder {
     * Doesn't really load the JARs merely finds and stores their URLs
     */
     private void loadJars(File arg1, Vector arg2) {
-        System.out.println("nationDatabase2/loadJars - initialising");
+        System.out.println(_CLASS+"/loadJars - initialising");
         if (arg1.exists()) {
             String[] files = arg1.list();
             if (files != null) {
@@ -173,7 +176,7 @@ public class jarFinder {
 //*****************************************
 
     private void loadWeapons() {
-        System.out.println("nationDatabase2/loadWeapons - initialising");
+        System.out.println(_CLASS+"/loadWeapons - initialising");
         this.setText("Preparing to load weapon classes", 48.0);
         URL[] urls = new URL[jarsWeapons.size()];
         jarsWeapons.copyInto(urls);
@@ -182,11 +185,11 @@ public class jarFinder {
         }
         allWeapons = new Vector();
         new WeaponClassLoader(urls, allWeapons);
-        System.out.println("nationDatabase2/loadWeapons - there are "+allWeapons.size()+" loaded");
+        System.out.println(_CLASS+"/loadWeapons - there are "+allWeapons.size()+" loaded");
     }
 
     private void loadNations() {
-        System.out.println("nationDatabase2/loadNations - initialising");
+        System.out.println(_CLASS+"/loadNations - initialising");
         this.setText("Preparing to load nation classes", 32.0);
         URL[] urls = new URL[jarsNations.size()];
         jarsNations.copyInto(urls);
@@ -195,7 +198,7 @@ public class jarFinder {
         }
         allNations = new Vector();
         new NationClassLoader(urls, allNations);
-        System.out.println("nationDatabase2/loadNations - there are "+allNations.size()+" loaded");
+        System.out.println(_CLASS+"/loadNations - there are "+allNations.size()+" loaded");
     }
 
     /**
@@ -206,7 +209,7 @@ public class jarFinder {
     * Each seperate hashtable bucket contains all weapons for one nation
     */
     private void sortWeapons() {
-        System.out.println("nationDatabase2/sortWeapons - initialising xxxxxxxxx");
+        System.out.println(_CLASS+"/sortWeapons - initialising xxxxxxxxx");
         this.setText("Sorting weapons.", 64.0);
         URL[] urls = new URL[jarsWeapons.size()];
         jarsWeapons.copyInto(urls);
@@ -236,7 +239,7 @@ public class jarFinder {
     * Given an URL for a JAR (weapon or nation) its contents are remotely checked
     */
     private boolean checkJars(URL u) {
-        System.out.println("nationDatabase2/checkJars - running");
+        System.out.println(_CLASS+"/checkJars - running");
         return new jarCustomExtractor(u).checkJar();
     }
 

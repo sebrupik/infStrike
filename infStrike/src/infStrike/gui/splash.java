@@ -19,7 +19,7 @@ public class splash extends JFrame {
     nationDatabase2 natB;
 
     public splash() {   
-        label = new JLabel(new ImageIcon("game/infStrike/images/mainSplash.jpg"));
+        label = new JLabel(new ImageIcon("infStrike/images/mainSplash.jpg"));
         label.setBorder(BorderFactory.createRaisedBevelBorder());
 
         curPro = new JProgressBar();

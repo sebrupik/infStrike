@@ -5,6 +5,7 @@ import java.util.Vector;
 import java.awt.geom.Point2D;
 
 public class varStoreObject {
+    private final String _CLASS;
     private Vector unitVec = new Vector();
     private Vector objVec = new Vector();
     private arenaPlan arena;
@@ -25,11 +26,12 @@ public class varStoreObject {
     private basicUnitInfo tmpBUI;
 
     public varStoreObject() {
+        this._CLASS = this.getClass().getName();
     }
 
     
     public void addUnit(basicUnitInfo arg1) {
-        System.out.println("adding unit : "+arg1.getName());
+        System.out.println(_CLASS+"/addUnit - adding unit : "+arg1.getName());
         unitVec.add(arg1);
     }
     public void resetArena() {
@@ -68,7 +70,7 @@ public class varStoreObject {
     * Once fully initialised returns the worldObject it has created.
     */
     public worldObject mkWorld() {
-        System.out.println("objects/varStoreObject- making world");
+        System.out.println(_CLASS+"/mkWorld - making world");
         worldObject world = new worldObject(getNumSides(), arena);
         
 
@@ -104,9 +106,9 @@ public class varStoreObject {
             world.add((basicUnitInfo)unitVec.elementAt(i));
         }
 
-        System.out.println("objects/varStoreObject- setting variables");
+        System.out.println(_CLASS+"/mkWorld - setting variables");
         //world.setVars(view, vArc, numBase, platSize, picWeap, advWeap, platoon, advPath);
-        System.out.println("objects/varStoreObject- returning world");
+        System.out.println(_CLASS+"/mkWorld - returning world");
         return world;
     }
 
@@ -116,7 +118,7 @@ public class varStoreObject {
     * making a grid over the arena. 
     */
     private Vector makeRandomBasePositions(int width, int height, int numOfBases) {
-        System.out.println("objects/varStoreObject/makeRandomPositions- starting "+numOfBases);
+        System.out.println(_CLASS+"/makeRandomPositions- starting "+numOfBases);
         Vector positions = new Vector();
         int resX, resY;
         int mult = 0;
@@ -137,7 +139,7 @@ public class varStoreObject {
                 positions.addElement(new Point2D.Double(xCor, yCor));
             }
         }
-        System.out.println("objects/varStoreObject/makeRandomPositions- finishing "+positions.size());
+        System.out.println(_CLASS+"/makeRandomPositions- finishing "+positions.size());
         return positions;
     }
 

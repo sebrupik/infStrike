@@ -57,7 +57,7 @@ public class frameSetup2 extends JFrame {
         buildArenaBut = new JButton("Build Arena");
         loadArenaBut = new JButton("Load Arena");
 
-        picLabel = new JLabel(new ImageIcon("game/infStrike/images/setup.jpg"));
+        picLabel = new JLabel(new ImageIcon("infStrike/images/setup.jpg"));
 
 
         backBut = new JButton("Back");
