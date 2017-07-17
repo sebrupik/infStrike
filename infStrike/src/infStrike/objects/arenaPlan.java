@@ -1,13 +1,9 @@
 package infStrike.objects;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.*;
 import java.awt.geom.Point2D;
 import java.awt.Polygon;
-import java.awt.geom.Rectangle2D;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class arenaPlan {
     private String name;
@@ -15,8 +11,8 @@ public class arenaPlan {
     private int height; 
     private int gridsize;
     private topoObj topo;
-    private Vector nodeVec = new Vector();
-    private Vector featVec = new Vector();
+    private ArrayList<navNode> nodeVec;
+    private ArrayList featVec ;
 
     private featObj tmpFeatObj;
     private featBush tmpBush;
@@ -26,18 +22,22 @@ public class arenaPlan {
 
     private boolean drawNodeBoo = false;
 
-    public arenaPlan(Vector arg1, topoObj arg2) {
+    public arenaPlan(ArrayList arg1, topoObj arg2) {
         topo = arg2;
+        
+        nodeVec = new ArrayList<>();
+        featVec = new ArrayList();
+        
         gridsize = topo.getGridsize();
         for (int i=0; i<arg1.size(); i++) {
-            if (arg1.elementAt(i) instanceof mapInfo) {
-                mapInfo tMapI = (mapInfo)arg1.elementAt(i);
+            if (arg1.get(i) instanceof mapInfo) {
+                mapInfo tMapI = (mapInfo)arg1.get(i);
                 name = tMapI.getName();
                 width = tMapI.getWidth();
                 height = tMapI.getHeight();
             }
             else
-                featVec.add(arg1.elementAt(i));
+                featVec.add(arg1.get(i));
         }
         
     }
@@ -58,14 +58,14 @@ public class arenaPlan {
                 tmpBuilding = (featBuilding)featVec.elementAt(i);
                 tmpBuilding.draw(g2);
             }*/
-            tmpFeatObj = (featObj)featVec.elementAt(i);
+            tmpFeatObj = (featObj)featVec.get(i);
             tmpFeatObj.updateGraphics(time, g2);
         }
 
         if (drawNodeBoo) {
             navNode tmpNode; 
             for (int i=0; i<nodeVec.size(); i++) {
-                tmpNode = (navNode)nodeVec.elementAt(i);
+                tmpNode = nodeVec.get(i);
                 tmpNode.draw(g2);
             }
         }
@@ -98,13 +98,13 @@ public class arenaPlan {
         featLake tmpLake;
         featBuilding tmpBuilding;
         for (int i=0; i<featVec.size(); i++) {     
-            if (featVec.elementAt(i) instanceof featLake) {
-                tmpLake = (featLake)featVec.elementAt(i); 
+            if (featVec.get(i) instanceof featLake) {
+                tmpLake = (featLake)featVec.get(i); 
                 if (tmpLake.contains(arg1))
                     return true;
             }
-            else if (featVec.elementAt(i) instanceof featBuilding) {
-                tmpBuilding = (featBuilding)featVec.elementAt(i); 
+            else if (featVec.get(i) instanceof featBuilding) {
+                tmpBuilding = (featBuilding)featVec.get(i); 
                 if (tmpBuilding.contains(arg1))
                     return true;
             }
@@ -117,8 +117,8 @@ public class arenaPlan {
     private int calcCost(Point2D.Double arg1) {
         featForest tmpForest;
         for (int i=0; i<featVec.size(); i++) {     
-            if (featVec.elementAt(i) instanceof featForest) {
-                tmpForest = (featForest)featVec.elementAt(i); 
+            if (featVec.get(i) instanceof featForest) {
+                tmpForest = (featForest)featVec.get(i); 
                 if (tmpForest.contains(arg1))
                     return 2;
             }
@@ -134,7 +134,7 @@ public class arenaPlan {
         navNode tmpNode;
         navNode tmpNode2;
         for (int i =0; i < nodeVec.size(); i++) {           
-            tmpNode = (navNode)nodeVec.elementAt(i);
+            tmpNode = (navNode)nodeVec.get(i);
             vicPoly.reset();
             vicPoly.addPoint((int)tmpNode.getCor().x-105, (int)tmpNode.getCor().y-105);
             vicPoly.addPoint((int)tmpNode.getCor().x+105, (int)tmpNode.getCor().y-105);
@@ -142,7 +142,7 @@ public class arenaPlan {
             vicPoly.addPoint((int)tmpNode.getCor().x-105, (int)tmpNode.getCor().y+105);
 
             for (int j=0; j < nodeVec.size(); j++) {
-                tmpNode2 = (navNode)nodeVec.elementAt(j);
+                tmpNode2 = (navNode)nodeVec.get(j);
                 if (tmpNode.getId() != tmpNode2.getId()) {
                     //System.out.println(tmpNode.getId()+" not the same as "+tmpNode2.getId());
                     if(vicPoly.contains(tmpNode2.getCor().x, tmpNode2.getCor().y)) {
@@ -161,7 +161,7 @@ public class arenaPlan {
     public int getWidth() { return width; }
     public int getHeight() { return height; }
     public int getGridsize() { return topo.getGridsize(); }
-    public Vector getFeatVec() { return featVec; }
+    public ArrayList getFeatVec() { return featVec; }
     public topoObj getTopoObj() { return topo; }
-    public Vector getNodeVec() { return nodeVec; }
+    public ArrayList getNodeVec() { return nodeVec; }
 }

@@ -11,7 +11,7 @@ import infStrike.objects.varStoreObject;
 import infStrike.objects.nationDatabase2;
 
 import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
@@ -22,7 +22,7 @@ import javax.xml.parsers.SAXParser;
 public class parser {
     public static void fileRead(File file, varStoreObject varStore, nationDatabase2 natDatabase) {
 
-        Vector unitList = new Vector() ;
+        ArrayList unitList = new ArrayList() ;
         infBasic tmpUnit;
         basicUnitInfo tmpBUI;
         
@@ -38,8 +38,8 @@ public class parser {
         }
         
         for (int i = 0; i < unitList.size(); i++) {
-            if (unitList.elementAt(i) instanceof basicUnitInfo) {
-                tmpBUI = (basicUnitInfo)unitList.elementAt(i);
+            if (unitList.get(i) instanceof basicUnitInfo) {
+                tmpBUI = (basicUnitInfo)unitList.get(i);
                 if (!varStore.nameExists(tmpBUI.getName())) {
                     varStore.addUnit(tmpBUI);
                     System.out.print(".");
@@ -47,20 +47,20 @@ public class parser {
                 else 
                     System.out.println("Already present : "+tmpBUI.toString());
             }
-            if (unitList.elementAt(i) instanceof mapInfo) {
-                varStore.addObj(unitList.elementAt(i));
+            if (unitList.get(i) instanceof mapInfo) {
+                varStore.addObj(unitList.get(i));
             }
-            if (unitList.elementAt(i) instanceof featForest) {
-                varStore.addObj(unitList.elementAt(i));
+            if (unitList.get(i) instanceof featForest) {
+                varStore.addObj(unitList.get(i));
             }
-            if (unitList.elementAt(i) instanceof featLake) {
-                varStore.addObj(unitList.elementAt(i));
+            if (unitList.get(i) instanceof featLake) {
+                varStore.addObj(unitList.get(i));
             }
-            if (unitList.elementAt(i) instanceof featBuilding) {
-                varStore.addObj(unitList.elementAt(i));
+            if (unitList.get(i) instanceof featBuilding) {
+                varStore.addObj(unitList.get(i));
             } 
-            if (unitList.elementAt(i) instanceof topoObj) {
-                varStore.setTopo(unitList.elementAt(i));
+            if (unitList.get(i) instanceof topoObj) {
+                varStore.setTopo(unitList.get(i));
             }
         }
         tmpUnit = null;

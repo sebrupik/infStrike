@@ -34,7 +34,7 @@ public class splash extends JFrame {
         
         natB = new nationDatabase2( new jarFinder( curPro, new Vector(), new Vector() ).getVectors() );  
         window.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
+            @Override public void mousePressed(MouseEvent e) {
                 window.dispose();
                 JFrame start = new dialogStart(natB);
             }

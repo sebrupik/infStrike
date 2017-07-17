@@ -1,31 +1,31 @@
 package infStrike.gui;
 
-import infStrike.objects.infBasic;
 import infStrike.objects.basicUnitInfo;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import java.io.*;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.ArrayList;
 
 public class dialogUnitSaver extends JDialog {
     private JLabel fileLbl;
     private JTextField fileTxt;
     private JButton createBut;
-    private Vector unitVec;
+    private ArrayList unitAl;
 
-    public dialogUnitSaver(Vector arg1) {
-        unitVec = arg1;
+    public dialogUnitSaver(ArrayList arg1) {
+        unitAl = arg1;
+        
+        this.genMainPanel();
+    }
+    
+    private void genMainPanel() {
         JPanel panel = new JPanel();
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();  
         panel.setLayout(gridbag); 
-
         
-
         fileLbl = new JLabel("File Name :");
         fileTxt = new JTextField("ENTER FILE NAME.unit");
         createBut = new JButton("Create File");
@@ -73,7 +73,7 @@ public class dialogUnitSaver extends JDialog {
         setSize(260, 140);
         setResizable(false);
         pack();
-        show();   
+        setVisible(true);   
     }
 
     void buildConstraints(GridBagConstraints gbc, int gx, int gy, int gw, int gh, int wx, int wy) {
@@ -89,15 +89,15 @@ public class dialogUnitSaver extends JDialog {
         String tStr;    
         int num = 1; 
 
-        for (int i=0; i<unitVec.size(); i++) {
-            if ( ((basicUnitInfo)unitVec.elementAt(i)).getSide() >= num)
+        for (int i=0; i<unitAl.size(); i++) {
+            if ( ((basicUnitInfo)unitAl.get(i)).getSide() >= num)
                 num++;
         }
         int[] all = new int[num];
         java.util.Arrays.fill(all, 0);
 
-        for (int i=0; i<unitVec.size(); i++) {
-            num = ((basicUnitInfo)unitVec.elementAt(i)).getSide();
+        for (int i=0; i<unitAl.size(); i++) {
+            num = ((basicUnitInfo)unitAl.get(i)).getSide();
             all[num] = all[num]+1;
         }
 
@@ -114,8 +114,7 @@ public class dialogUnitSaver extends JDialog {
         basicUnitInfo tmpInf;
         String[] tmpStr;
 
-        try {         
-            FileWriter stuff = new FileWriter(fileTxt.getText().trim());
+        try (FileWriter stuff = new FileWriter(fileTxt.getText().trim())) {  
         
             stuff.write("<?xml version='1.0'?>\n");
             stuff.write("<!-- Infantry Strike Unit Information File -->\n");
@@ -140,8 +139,8 @@ public class dialogUnitSaver extends JDialog {
             stuff.write("    </Schema>\n");
 
             
-            for (int i=0; i < unitVec.size(); i++) { 
-                tmpInf = (basicUnitInfo)unitVec.elementAt(i);
+            for (int i=0; i < unitAl.size(); i++) { 
+                tmpInf = (basicUnitInfo)unitAl.get(i);
                 tmpStr = tmpInf.getMagType();
                 stuff.write("    <Unit>\n");
                 stuff.write("        <Attribute Name=\"Side\">\n");

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class AIMissionPriority {
     AIMPE[] entries;  
 
-    ArrayList missionTypeList;
+    ArrayList<String> missionTypeList;
  
     public AIMissionPriority(String[] mission_types) {
         entries = new AIMPE[mission_types.length];
@@ -21,15 +21,14 @@ public class AIMissionPriority {
 
     public ArrayList calcNumOfMissions(int num) {
         int numMissions;
-        missionTypeList = new ArrayList();
+        missionTypeList = new ArrayList<>();
 
-        for (int i=0; i<entries.length; i++) {
-            numMissions = (int)((((double)num/100)) * ((entries[i].value/1.0)*100));
+        for (AIMPE entry : entries) {
+            numMissions = (int) ((((double)num/100)) * ((entry.value / 1.0) * 100));
             if (numMissions < 1)
                 numMissions = 1;
-
-            for (int j=0; j<numMissions; j++) {
-                missionTypeList.add(entries[i].mission);
+            for (int j = 0; j<numMissions; j++) {
+                missionTypeList.add(entry.mission);
             }
         }
         return missionTypeList;
@@ -45,7 +44,7 @@ class AIMPE implements Comparable {
         this.mission = mission;
     }
 
-    public int compareTo(Object o) {
+    @Override public int compareTo(Object o) {
          //try {
              if ( ((AIMPE)o).value < this.value) 
                  return -1; 

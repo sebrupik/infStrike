@@ -1,13 +1,12 @@
 package infStrike.objects;
 
-import java.util.*;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.awt.geom.Point2D;
 
 public class varStoreObject {
     private final String _CLASS;
-    private Vector unitVec = new Vector();
-    private Vector objVec = new Vector();
+    private ArrayList<basicUnitInfo> unitAl;
+    private ArrayList objAl;
     private arenaPlan arena;
     private topoObj topo;
     private int view;
@@ -27,12 +26,15 @@ public class varStoreObject {
 
     public varStoreObject() {
         this._CLASS = this.getClass().getName();
+        
+        unitAl = new ArrayList<basicUnitInfo>();
+        objAl = new ArrayList();
     }
 
     
     public void addUnit(basicUnitInfo arg1) {
         System.out.println(_CLASS+"/addUnit - adding unit : "+arg1.getName());
-        unitVec.add(arg1);
+        unitAl.add(arg1);
     }
     public void resetArena() {
         arena = null;
@@ -56,12 +58,12 @@ public class varStoreObject {
     }
                              
     public void mkArena() {
-        if (objVec != null & topo != null) {
-            arena = new arenaPlan(objVec, topo);
+        if (objAl != null & topo != null) {
+            arena = new arenaPlan(objAl, topo);
             arena.printInfo();
         }
 
-        if (objVec.size() != 0)
+        if (objAl.size() != 0)
             arenaBoo = true;
     }
 
@@ -82,7 +84,7 @@ public class varStoreObject {
 
 
         AIController AICont = null;
-        Vector randomPositions = makeRandomBasePositions(arena.getWidth(), arena.getHeight(), numBases*getNumSides());
+        ArrayList randomPositions = makeRandomBasePositions(arena.getWidth(), arena.getHeight(), numBases*getNumSides());
 
         for(int i=0; i < getNumSides(); i++) {
             if (aiTypes[i].equals("RCS")) {
@@ -102,8 +104,8 @@ public class varStoreObject {
         
 
         //add the user specified Soldiers
-        for (int i=0; i<unitVec.size(); i++) {
-            world.add((basicUnitInfo)unitVec.elementAt(i));
+        for (int i=0; i<unitAl.size(); i++) {
+            world.add((basicUnitInfo)unitAl.get(i));
         }
 
         System.out.println(_CLASS+"/mkWorld - setting variables");
@@ -117,9 +119,9 @@ public class varStoreObject {
     * specific areas in the arena. The number of areas is equal to the number of bases,
     * making a grid over the arena. 
     */
-    private Vector makeRandomBasePositions(int width, int height, int numOfBases) {
+    private ArrayList makeRandomBasePositions(int width, int height, int numOfBases) {
         System.out.println(_CLASS+"/makeRandomPositions- starting "+numOfBases);
-        Vector positions = new Vector();
+        ArrayList<Point2D.Double> positions = new ArrayList<Point2D.Double>();
         int resX, resY;
         int mult = 0;
         int boundary = 100;  //the distance away from the real edge of the arena
@@ -136,16 +138,16 @@ public class varStoreObject {
                 double xCor = (x*resX)+(Math.random()*resX);
                 double yCor = (y*resY)+(Math.random()*resY);
                 System.out.println(xCor+", "+yCor);
-                positions.addElement(new Point2D.Double(xCor, yCor));
+                positions.add(new Point2D.Double(xCor, yCor));
             }
         }
         System.out.println(_CLASS+"/makeRandomPositions- finishing "+positions.size());
         return positions;
     }
 
-    private Point2D.Double pickRandomPosition(Vector v) {
+    private Point2D.Double pickRandomPosition(ArrayList v) {
         int index = (int)(Math.random()*v.size());
-        Point2D.Double p2D = (Point2D.Double)v.elementAt(index);
+        Point2D.Double p2D = (Point2D.Double)v.get(index);
         v.remove(index);
         return p2D;
     }
@@ -154,8 +156,8 @@ public class varStoreObject {
     public boolean nameExists(String arg1) { 
         infBasic tmp;
         String tmpStr;
-        for(int i =0; i < unitVec.size(); i++) {
-            tmpBUI = (basicUnitInfo)unitVec.elementAt(i);
+        for(int i =0; i < unitAl.size(); i++) {
+            tmpBUI = (basicUnitInfo)unitAl.get(i);
             if(tmpBUI.getName().equals(arg1))
                 return true;
         } 
@@ -165,8 +167,8 @@ public class varStoreObject {
 
     public int getNumSides() {
         int cnt = -1;
-        for(int i=0; i<unitVec.size(); i++) { 
-            tmpBUI = (basicUnitInfo)unitVec.elementAt(i);
+        for(int i=0; i<unitAl.size(); i++) { 
+            tmpBUI = (basicUnitInfo)unitAl.get(i);
             if(tmpBUI.getSide() > cnt)
                 cnt = tmpBUI.getSide();
         }
@@ -174,12 +176,12 @@ public class varStoreObject {
     }
 
     public void setTopo(Object arg1) { topo = (topoObj)arg1; }
-    public void resetVar() { unitVec.clear(); }
-    public void resetObj() { objVec.clear(); }
-    public void addObj(Object arg1) { objVec.add(arg1); }
+    public void resetVar() { unitAl.clear(); }
+    public void resetObj() { objAl.clear(); }
+    public void addObj(Object arg1) { objAl.add(arg1); }
 
     public boolean getVarBoo() { return varBoo; }
     public boolean getArenaBoo() { return arenaBoo; }
-    public int getUnitVecSize() { return unitVec.size(); }
+    public int getUnitVecSize() { return unitAl.size(); }
     public arenaPlan getArenaPlan() { return arena; }   
 }

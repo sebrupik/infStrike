@@ -44,6 +44,10 @@ public abstract class weapFile {
         this(arg1.getName(), arg1.getWeaponUser(), arg1.getAmmoType(), arg1.getWeight(), arg1.getRof());
     }
     
+    public weapFile(String name, String weaponUser, String ammoType, double weight, int rof) {
+        this(name, weaponUser, ammoType, weight, rof, false, false, true);
+    }
+    
     /**
     * The fire mode should be determined by the distance to the target - 
     * Single>far, burst>medium, close>full auto
@@ -74,7 +78,7 @@ class emptyWeap extends weapFile {
         super("Unarmed", "Unarmed", "None", 1.0, 1);
     }
 
-    public weapFile newInstance() {
+    @Override public weapFile newInstance() {
         return new emptyWeap();
     }
 }

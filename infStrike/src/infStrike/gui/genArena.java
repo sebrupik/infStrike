@@ -3,9 +3,6 @@ package infStrike.gui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import java.util.Vector;
 
 public class genArena extends JDialog {
     private JLabel widthLbl;
@@ -19,6 +16,10 @@ public class genArena extends JDialog {
     private JButton setBut;
 
     public genArena() {
+          genMainPanel();
+    }
+    
+    private void genMainPanel() {
         JPanel panel = new JPanel();
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();  
@@ -77,7 +78,7 @@ public class genArena extends JDialog {
                                                                Integer.parseInt(heightTXT.getText()), 
                                                                Integer.parseInt(gridTXT.getText()), 
                                                                null);
-                        arEditor.show();
+                        arEditor.setVisible(true);
                         
                         dispose();
                     }
@@ -104,7 +105,7 @@ public class genArena extends JDialog {
         setSize(300, 150);
         setResizable(false);
         pack();
-        show();    
+        setVisible(true);  
     }
 
     void buildConstraints(GridBagConstraints gbc, int gx, int gy, int gw, int gh, int wx, int wy) {

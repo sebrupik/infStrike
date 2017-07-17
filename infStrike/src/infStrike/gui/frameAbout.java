@@ -3,9 +3,6 @@ package infStrike.gui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.applet.*; 
-import java.net.*; 
-import java.io.*; 
 
 public class frameAbout extends JFrame {
     Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -28,9 +25,9 @@ public class frameAbout extends JFrame {
         window.getContentPane().add(label2, BorderLayout.CENTER);
         window.getContentPane().add(label3, BorderLayout.SOUTH);
         centerWindow();
-        window.show();
+        window.setVisible(true);
         window.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
+            @Override public void mousePressed(MouseEvent e) {
                 window.dispose();
             }
         });

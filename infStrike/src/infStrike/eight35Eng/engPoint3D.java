@@ -3,20 +3,25 @@ package infStrike.eight35Eng;
 import java.awt.*;
 
 public class engPoint3D {
-    private engVector point  = new engVector();
-    private engVector tPoint = new engVector();
-    private Color    colour;
+    private engVector point;
+    private engVector tPoint;
+    private Color colour;
 
     public engPoint3D(double x,double y,double z,Color c) {
-       point.setValueAt(0,x);
-       point.setValueAt(1,y);
-       point.setValueAt(2,z);
-       point.setValueAt(3,1);
-       tPoint.setValueAt(0,x);
-       tPoint.setValueAt(1,y);
-       tPoint.setValueAt(2,z);
-       tPoint.setValueAt(3,1);
-       colour=c;
+     
+        point  = new engVector(x, y, z, 1);
+        tPoint = new engVector(z, y, z, 1);
+        
+        /*point.setValueAt(0,x);
+        point.setValueAt(1,y);
+        point.setValueAt(2,z);
+        point.setValueAt(3,1);
+        tPoint.setValueAt(0,x);
+        tPoint.setValueAt(1,y);
+        tPoint.setValueAt(2,z);
+        tPoint.setValueAt(3,1);*/
+        
+        colour=c;
     }
 
     public void transform(engMatrix m) {

@@ -14,7 +14,7 @@ import java.awt.Polygon;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.Graphics;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 
@@ -308,7 +308,7 @@ class editorCanvas extends JPanel {
     private int gridsize;
     private int maxTopoHeight;
     private double topoPercent;
-    private Vector objVec = new Vector(); 
+    private ArrayList<featObj> objAl; 
     private int[][] topoGrid;
     private int topoX, topoY;
 
@@ -355,13 +355,13 @@ class editorCanvas extends JPanel {
     private String nameExists1 = "The name ";
     private String nameExists2 = " already exists.";
 
-    public editorCanvas(int arg1, int arg2, int arg3, Vector arg4, int[][] arg5) {
+    public editorCanvas(int arg1, int arg2, int arg3, ArrayList<featObj> arg4, int[][] arg5) {
         width = arg1;
         height = arg2;
         gridsize = arg3;
 
         if (arg4 != null)
-            objVec = arg4;
+            objAl = arg4;
 
         if (arg5 != null)
             topoGrid = arg5;
@@ -378,7 +378,7 @@ class editorCanvas extends JPanel {
         calcMaxTopoHeight();
     }
 
-    public void paint(Graphics g) {
+    @Override public void paint(Graphics g) {
         super.paintComponent(g);  
         tmpX = 0;
         tmpY = 0;
@@ -435,8 +435,8 @@ class editorCanvas extends JPanel {
         if(tmpPoly.npoints > 0) 
             g.drawPolygon(tmpPoly);
 
-        for(int i=0; i<objVec.size(); i++) {
-            tmpFeatObj = (featObj)objVec.elementAt(i);
+        for(int i=0; i<objAl.size(); i++) {
+            tmpFeatObj = (featObj)objAl.get(i);
             tmpFeatObj.updateGraphics(0.0, g2D);
             if (showNamesBoo) {
                 g2D.setColor(Color.black);
@@ -445,7 +445,7 @@ class editorCanvas extends JPanel {
         }
         if (vecPosition != -1) {
             g2D.setColor(Color.black);
-            tmpFeatObj = (featObj)objVec.elementAt(vecPosition);
+            tmpFeatObj = (featObj)objAl.get(vecPosition);
             g2D.drawPolygon(findBounds(tmpFeatObj));
         }
     }
@@ -485,9 +485,9 @@ class editorCanvas extends JPanel {
 
     private boolean polyInside(Polygon arg1) {
         Rectangle2D tmpRect = arg1.getBounds2D();
-        for(int i=0; i<objVec.size(); i++) {
+        for(int i=0; i<objAl.size(); i++) {
 
-            tmpFeatObj = (featObj)objVec.elementAt(i);
+            tmpFeatObj = (featObj)objAl.get(i);
             if(tmpFeatObj.containsPoly(tmpRect)) {
                 JOptionPane.showMessageDialog(
                         editorCanvas.this,
@@ -502,8 +502,8 @@ class editorCanvas extends JPanel {
     }
 
     private boolean checkNameExists(String arg1) {
-        for(int i=0; i<objVec.size(); i++) {
-            tmpFeatObj = (featObj)objVec.elementAt(i);
+        for(int i=0; i<objAl.size(); i++) {
+            tmpFeatObj = (featObj)objAl.get(i);
 
             if(arg1.equals(tmpFeatObj.getName())) {
                 JOptionPane.showMessageDialog(
@@ -561,7 +561,7 @@ class editorCanvas extends JPanel {
 //********************* methods used by 'frameArenaEditor' menuItems ******************
 
     public void writeToFile() {
-        dialogArenaSaver arSave = new dialogArenaSaver(width, height, objVec, topoGrid);
+        dialogArenaSaver arSave = new dialogArenaSaver(width, height, objAl, topoGrid);
     }
     public void setTopoView(boolean arg1) {
         topoViewBoo = arg1;
@@ -587,15 +587,15 @@ class editorCanvas extends JPanel {
     public void addObj(String arg1) {
         if (!checkNameExists(arg1) & !arg1.equals("") & !polyInside(tmpPoly) & (tmpPoly.npoints > 0)) {
             if(forestBoo) {
-                objVec.addElement(new featForest(tmpPoly.npoints, tmpPoly.xpoints, tmpPoly.ypoints, arg1));
+                objAl.add(new featForest(tmpPoly.npoints, tmpPoly.xpoints, tmpPoly.ypoints, arg1));
                 resetTmpPoly();
             }
             if(lakeBoo) {
-                objVec.addElement(new featLake(tmpPoly.npoints, tmpPoly.xpoints, tmpPoly.ypoints, arg1));
+                objAl.add(new featLake(tmpPoly.npoints, tmpPoly.xpoints, tmpPoly.ypoints, arg1));
                 resetTmpPoly();
             }
             if(buildBoo) {
-                objVec.addElement(new featBuilding(tmpPoly.npoints, tmpPoly.xpoints, tmpPoly.ypoints, arg1, 2));
+                objAl.add(new featBuilding(tmpPoly.npoints, tmpPoly.xpoints, tmpPoly.ypoints, arg1, 2));
                 resetTmpPoly();
             }
             repaint();
@@ -667,8 +667,8 @@ class editorCanvas extends JPanel {
             
             if (editModeBoo & (e1.getModifiers() & e1.BUTTON3_MASK)!=0) {
                 System.out.println("Engage special editing powers!");
-                for(int i=0; i<objVec.size(); i++) {
-                    tmpFeatObj = (featObj)objVec.elementAt(i);
+                for(int i=0; i<objAl.size(); i++) {
+                    tmpFeatObj = (featObj)objAl.get(i);
                     tmpPoint = new Point2D.Double((e1.getX()*(1/scale))-(int)translation.x(), (e1.getY()*(1/scale))-(int)translation.y());
                     if(tmpFeatObj.contains(tmpPoint)) {
                         System.out.println("You are trying to fuck with : "+tmpFeatObj.getName());

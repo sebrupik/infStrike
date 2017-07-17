@@ -4,7 +4,7 @@ import java.awt.geom.*;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
 * The base is responsible for:
@@ -28,7 +28,7 @@ public class Base {
     AIController AIC;
 
     dataCallsigns callsigns;
-    private Vector platoons;                   // Vector of aiPlatoons who are stationed at this base.
+    private ArrayList<AIPlatoon> platoons;                   // Vector of aiPlatoons who are stationed at this base.
     //private Point2D.Double[] barrackLocations; //array of points around the base where platoons can wait for missions
     //private String[] barrackOccupiers;
 
@@ -51,7 +51,7 @@ public class Base {
         callsigns = new dataCallsigns(side);
 
         
-        platoons = new Vector();
+        platoons = new ArrayList();
         //barrackLocations = new Point2D.Double[10];
         //barrackOccupiers = new String[10];
         barrackLocations = new barrackLocation[10];
@@ -63,19 +63,19 @@ public class Base {
     public void makePlatoons() {
         AIPlatoon tempPlatoon = new AIPlatoon(side+"-"+callsigns.makeCallsign(world.platoons[side]), world, AIC);
         for (int i=0; i<world.sides[side].size(); i++) { 
-            if(!((Agent)world.sides[side].elementAt(i)).getInPlatoon()) {  //agent not in platoon
-                tempPlatoon.addMember((Agent)world.sides[side].elementAt(i));
-                ((Agent)world.sides[side].elementAt(i)).setInPlatoon(true);
+            if(!world.sides[side].get(i).getInPlatoon()) {  //agent not in platoon
+                tempPlatoon.addMember(world.sides[side].get(i));
+                world.sides[side].get(i).setInPlatoon(true);
             }
             if (tempPlatoon.getSize() >= platoonSize) {
-                world.platoons[side].addElement(tempPlatoon);
+                world.platoons[side].add(tempPlatoon);
                 System.out.println(BASE_NAME+" just created a platoon : ");
                 tempPlatoon.printAllMembers();
                 tempPlatoon = new AIPlatoon(side+"-"+callsigns.makeCallsign(world.platoons[side]), world, AIC);
             }
         } 
         if (tempPlatoon.getSize() > 0) {
-            world.platoons[side].addElement(tempPlatoon);
+            world.platoons[side].add(tempPlatoon);
         }
 
         tempPlatoon = null;
@@ -99,7 +99,7 @@ public class Base {
 
         //System.out.println("Base/makeDefenceMisson - platoons size is : "+platoons.size());
         for (int i=0; i<platoons.size(); i++) {
-            mission = ((AIPlatoon)platoons.elementAt(i)).getMission();
+            mission = platoons.get(i).getMission();
             if ( mission.getType().equals("DEFEND") & mission.getBase() == this) {
                 boo = true;
                 //num++;
@@ -274,7 +274,7 @@ public class Base {
     public int calcMembers() {
         int tempInt = 0;
         for(int i=0; i<platoons.size(); i++) {
-            tempInt += ((AIPlatoon)platoons.elementAt(i)).getSize();
+            tempInt += platoons.get(i).getSize();
         }
         return tempInt;
     }
@@ -284,19 +284,19 @@ public class Base {
     */
     public void addPlatoon(AIPlatoon platoon) {
         if (!platoons.contains(platoon)) {
-            platoons.addElement(platoon);
+            platoons.add(platoon);
         }
 
     }
     private void removePlatoon(AIPlatoon platoon) {
         int index = -1;
         for (int i=0; i<platoons.size(); i++) {
-            if( ((AIPlatoon)platoons.elementAt(i)).getID().equals(platoon.getID()) ) {  //check if platoon not already registered
+            if( platoons.get(i).getID().equals(platoon.getID()) ) {  //check if platoon not already registered
                 index = i;
             }
         }
         if (index != -1)
-            platoons.removeElementAt(index);
+            platoons.remove(index);
     }
 
 

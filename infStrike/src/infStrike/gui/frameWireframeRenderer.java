@@ -70,19 +70,19 @@ class wireCanvas extends JPanel implements ActionListener {
         tmpEng.loadMapArray(world.getArenaPlan().getTopoObj().getTopoValues(), 
                             world.getArenaPlan().getTopoObj().getGridsize());
         //***********
-        world.transform(rotationMatrix.multiply(worldMatrix));
+        //world.transform(rotationMatrix.multiply(worldMatrix));
         //***********
     }
 
     // was : synchronized public void paint(Graphics g) {frameWireframeRenderer   <---- huh?!
-    synchronized public void paint(Graphics g) {
+    @Override synchronized public void paint(Graphics g) {
         super.paintComponent(g);  
         Dimension size = getSize();
         setBackground(Color.white);
         tmpEng.draw(g, (size.width/2), (size.height/2));
     }
 
-    public void actionPerformed(ActionEvent event) {
+    @Override public void actionPerformed(ActionEvent event) {
         repaint();
     }
 

@@ -12,7 +12,7 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
 
 
 public class frameSetup2 extends JFrame {
@@ -35,19 +35,14 @@ public class frameSetup2 extends JFrame {
 
     
     varStoreObject varStore;
-    Vector unitVec;
+    ArrayList unitAl;
     JFileChooser chooser = new JFileChooser(new File("."));
 
     public frameSetup2(nationDatabase2 arg1) {
         this.natDatabase = arg1;
 
         varStore = new varStoreObject();
-        unitVec = new Vector();
-
-        unitPanel = new JPanel();
-        arenaPanel = new JPanel();
-        mainPanel = new JPanel();
-
+        unitAl = new ArrayList();
 
         createUnitsBut = new JButton("Create Units");
         numSidesLbl = new JLabel("Number of oponents :");
@@ -59,9 +54,12 @@ public class frameSetup2 extends JFrame {
 
         picLabel = new JLabel(new ImageIcon("infStrike/images/setup.jpg"));
 
-
         backBut = new JButton("Back");
 
+        genPanel();
+    }
+    
+    private void genPanel() {
         setTitle("Infantry Strike Setup -- V1.2e");
         setSize(320,350);
         setDefaultCloseOperation(EXIT_ON_CLOSE) ;
@@ -71,14 +69,30 @@ public class frameSetup2 extends JFrame {
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();  
         mainPanel.setLayout(gridbag);     
+        
+        contentPane.add(genMainPanel(mainPanel, gridbag, constraints), "Center");
+        contentPane.add(backBut, "South");
+        
+        
+        backBut.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                JFrame start = new dialogStart(natDatabase);
+            }
+        });
+    }
+    
+    private JPanel genMainPanel(JPanel mainPanel, GridBagLayout gridbag, GridBagConstraints constraints) {
+        unitPanel = new JPanel();
+        arenaPanel = new JPanel();
+        
         unitPanel.setLayout(gridbag);     
         arenaPanel.setLayout(gridbag);  
 
         unitPanel.setBorder(new TitledBorder("Units"));
         arenaPanel.setBorder(new TitledBorder("Arena"));  
-        contentPane.add(mainPanel, "Center");
-        contentPane.add(backBut, "South");
-
+        
+        
         //mainPanel
         buildConstraints(constraints, 0, 0, 1, 2, 100, 100);
         constraints.fill = GridBagConstraints.HORIZONTAL;                 
@@ -92,6 +106,8 @@ public class frameSetup2 extends JFrame {
         constraints.fill = GridBagConstraints.HORIZONTAL;                 
         gridbag.setConstraints(arenaPanel, constraints);
         mainPanel.add(arenaPanel);
+        
+        
     
         //unitPanel
         buildConstraints(constraints, 0, 0, 2, 1, 100, 100);
@@ -131,7 +147,7 @@ public class frameSetup2 extends JFrame {
             private String err = "No nation files have been found.";
             public void actionPerformed(ActionEvent e) {
                 if (natDatabase.getNumNations() > 0) {
-                    dialogForceChoose chooFrame = new dialogForceChoose(Integer.parseInt(numSidesTxt.getText()), unitVec, true, natDatabase);
+                    dialogForceChoose chooFrame = new dialogForceChoose(Integer.parseInt(numSidesTxt.getText()), unitAl, true, natDatabase);
                 }
                 else {
                     JOptionPane.showMessageDialog(
@@ -148,8 +164,8 @@ public class frameSetup2 extends JFrame {
             private String info = "Information";
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Clearing "+varStore.getUnitVecSize()+" items");
-                unitVec.clear();
-                if (unitVec.size() == 0) {
+                unitAl.clear();
+                if (unitAl.size() == 0) {
                     JOptionPane.showMessageDialog(
                         clearUnitsBut,
                         clearSuc,
@@ -169,7 +185,7 @@ public class frameSetup2 extends JFrame {
             private String warn = "Warning";
             public void actionPerformed(ActionEvent e) {
 
-                if (unitVec.size() == 0) {
+                if (unitAl.size() == 0) {
                     JOptionPane.showMessageDialog(
                         saveUnitsBut,
                         genWarn,
@@ -215,14 +231,10 @@ public class frameSetup2 extends JFrame {
             }
         });
 
-
-        backBut.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-                JFrame start = new dialogStart(natDatabase);
-            }
-        });
+        
+        return mainPanel;
     }
+    
     void buildConstraints(GridBagConstraints gbc, int gx, int gy, int gw, int gh, int wx, int wy) {
         gbc.gridx = gx;
         gbc.gridy = gy;

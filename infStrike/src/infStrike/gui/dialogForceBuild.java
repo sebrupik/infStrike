@@ -9,15 +9,15 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class dialogForceBuild extends JDialog {
     private static JTabbedPane tp;
     private JLabel GUIPic;
-    private Vector unitVec;
+    private ArrayList unitAl;
 
-    public dialogForceBuild(String[] arg1, Vector arg2, nationDatabase2 arg3) {
-        this.unitVec = arg2;
+    public dialogForceBuild(String[] arg1, ArrayList arg2, nationDatabase2 arg3) {
+        this.unitAl = arg2;
         tp = new JTabbedPane();
         GUIPic = new JLabel(new ImageIcon("game/infStrike/images/GUI.jpg"));
         Container contentPane = getContentPane();
@@ -26,7 +26,7 @@ public class dialogForceBuild extends JDialog {
 
         for(int i=0; i<arg1.length; i++) {
             System.out.println(arg3.getNationFile(arg1[i]).getNation());
-            tp.add(new unitSetup(arg1[i], i, unitVec, arg3.getNationFile(arg1[i]), arg3.getPic("NATION", arg1[i])), "Side "+i);
+            tp.add(new unitSetup(arg1[i], i, unitAl, arg3.getNationFile(arg1[i]), arg3.getPic("NATION", arg1[i])), "Side "+i);
             System.out.println("one has been added");
         }
         System.out.println("dialogForceBuild - adding weapInfo panel");        
@@ -76,14 +76,14 @@ class unitSetup extends JPanel {
     private String nation;
     private int side;
 
-    Vector unitVec;
+    ArrayList unitAl;
 
     nationFile2 natFile;
 
-    public unitSetup(String arg1, int arg2, Vector arg3, nationFile2 arg4, ImageIcon arg5) {  // nation, side, unitVec, specific weapFile
+    public unitSetup(String arg1, int arg2, ArrayList arg3, nationFile2 arg4, ImageIcon arg5) {  // nation, side, unitVec, specific weapFile
         this.nation = arg1;
         this.side = arg2;
-        this.unitVec = arg3;
+        this.unitAl = arg3;
         this.natFile = arg4;
 
         GridBagLayout gridbag = new GridBagLayout();
@@ -111,7 +111,7 @@ class unitSetup extends JPanel {
         addUnit = new JButton("Add"); 
 
         sideTypeImg = new JLabel(arg5);      
-        nameTypeTXT = new JTextField(natFile.makeName(unitVec));
+        nameTypeTXT = new JTextField(natFile.makeName(unitAl));
         priWTypeBox = new JComboBox(natFile.getWeapPri());
         secWTypeBox = new JComboBox(natFile.getWeapSec());
          

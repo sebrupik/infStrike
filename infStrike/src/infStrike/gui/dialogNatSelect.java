@@ -1,6 +1,6 @@
 package infStrike.gui;
 
-import infStrike.data.varStore;
+//import infStrike.data.varStore;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -33,8 +33,8 @@ public class dialogNatSelect extends JDialog {
 
         for (int i=0; i<natVec.size(); i++) {
             boxItem = (String)natVec.elementAt(i) 
-                      +"("+
-                      varStore.getNatNumber((String)natVec.elementAt(i), side)
+                      //+"("+
+                      //arStore.getNatNumber((String)natVec.elementAt(i), side)
                       +")";
             nationBox.addItem(boxItem);
         }
@@ -56,7 +56,7 @@ public class dialogNatSelect extends JDialog {
         setBut.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)  {
                 //varStore.removeNations((String)nationBox.getItemAt(nationBox.getSelectedIndex()), side);
-                varStore.removeNations((String)natVec.elementAt(nationBox.getSelectedIndex()), side);
+                //varStore.removeNations((String)natVec.elementAt(nationBox.getSelectedIndex()), side);
                 dispose();
             }
         });

@@ -71,7 +71,7 @@ public class engVector {
       vector[i]=val;
    }
 
-   public String toString() {
+   @Override public String toString() {
       return "|\t"+vector[0]+"\t"+vector[1]+"\t"+vector[2]+"\t"+vector[3]+"\t"+"|\n\n";
    }
 }

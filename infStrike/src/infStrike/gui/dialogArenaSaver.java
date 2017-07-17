@@ -2,15 +2,14 @@ package infStrike.gui;
 
 import infStrike.objects.featLake;
 import infStrike.objects.featBuilding;
-import infStrike.objects.featBush;
 import infStrike.objects.featForest;
+import infStrike.objects.featObj;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import java.io.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class dialogArenaSaver extends JDialog {
     private JLabel mapLbl;
@@ -19,18 +18,22 @@ public class dialogArenaSaver extends JDialog {
     private JTextField fileTxt;
     private JButton createBut;
     private int width, height;
-    private Vector objVec;
+    private ArrayList objAl;
     private int topoGrid[][];
     private int gridsize;
     
 
-    public dialogArenaSaver(int arg1, int arg2, Vector arg3, int[][] arg4) {
+    public dialogArenaSaver(int arg1, int arg2, ArrayList<featObj> arg3, int[][] arg4) {
         width = arg1;
         height  = arg2;
-        objVec = arg3;
+        objAl = arg3;
         topoGrid = arg4;
         gridsize = (width/topoGrid.length);
 
+        genMainPanel();
+    }
+
+    private void genMainPanel() {
         JPanel panel = new JPanel();
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();  
@@ -95,9 +98,9 @@ public class dialogArenaSaver extends JDialog {
         setSize(260, 140);
         setResizable(false);
         pack();
-        show();   
+        setVisible(true);
     }
-
+    
     void buildConstraints(GridBagConstraints gbc, int gx, int gy, int gw, int gh, int wx, int wy) {
         gbc.gridx = gx;
         gbc.gridy = gy;
@@ -112,9 +115,7 @@ public class dialogArenaSaver extends JDialog {
         featBuilding tmpBuilding;
         featLake tmpLake;
 
-        try {         
-            FileWriter stuff = new FileWriter(fileTxt.getText().trim());
-        
+        try (FileWriter stuff = new FileWriter(fileTxt.getText().trim())) {  
             stuff.write("<?xml version='1.0'?>\n");
             stuff.write("<!-- Infantry Strike Arena Information File -->\n");
             stuff.write("<ArenaInfo>\n");
@@ -130,13 +131,12 @@ public class dialogArenaSaver extends JDialog {
             stuff.write("            "+height+"\n");
             stuff.write("        </Attribute>\n");
             stuff.write("    </Info>\n");
-
-
-
             
-            for (int i=0; i<objVec.size(); i++) { 
-                if(objVec.elementAt(i) instanceof featForest) {
-                    tmpForest = (featForest)objVec.elementAt(i);
+            for (int i=0; i<objAl.size(); i++) { 
+                Object o = objAl.get(i);
+                if(o instanceof featForest) {
+                    tmpForest = (featForest)o; 
+                    
                     stuff.write("    <Forest>\n");
                     stuff.write("        <Attribute Name=\"NumPoints\">\n");
                     stuff.write("            "+tmpForest.getNumPoints()+"\n");
@@ -155,8 +155,8 @@ public class dialogArenaSaver extends JDialog {
                     stuff.write("        </Attribute>\n");
                     stuff.write("    </Forest>\n");
                 }
-                if(objVec.elementAt(i) instanceof featLake) {
-                    tmpLake = (featLake)objVec.elementAt(i);
+                if(o instanceof featLake) {
+                    tmpLake = (featLake)o;
                     stuff.write("    <Lake>\n");
                     stuff.write("        <Attribute Name=\"NumPoints\">\n");
                     stuff.write("            "+tmpLake.getNumPoints()+"\n");
@@ -175,8 +175,8 @@ public class dialogArenaSaver extends JDialog {
                     stuff.write("        </Attribute>\n");
                     stuff.write("    </Lake>\n");
                 }
-                if(objVec.elementAt(i) instanceof featBuilding) {
-                    tmpBuilding = (featBuilding)objVec.elementAt(i);
+                if(o instanceof featBuilding) {
+                    tmpBuilding = (featBuilding)o;
                     stuff.write("    <Building>\n");
                     stuff.write("        <Attribute Name=\"NumPoints\">\n");
                     stuff.write("            "+tmpBuilding.getNumPoints()+"\n");

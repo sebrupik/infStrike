@@ -9,7 +9,7 @@ import infStrike.objects.nationDatabase2;
 import infStrike.objects.mapInfo;
 import infStrike.objects.featLake;
 
-import java.io.*;
+import java.util.ArrayList;
 import java.util.*;
 
 import org.xml.sax.*;
@@ -34,7 +34,7 @@ public class XMLHandler extends DefaultHandler {
     private static final int LASTCHARS_INITIAL_CAPACITY = 1024 ;
     private StringBuffer lastCharacters = new StringBuffer(LASTCHARS_INITIAL_CAPACITY) ;
 
-    private Collection xmlCol ;
+    private ArrayList xmlCol ;
     private String[][] UnitValues = new String[2][16];
     private String[][] MapValues = new String[2][3];
     private String[][] ForestValues = new String[2][4];
@@ -50,7 +50,7 @@ public class XMLHandler extends DefaultHandler {
     private boolean parseBuilding = false;
     private boolean parseTopo = false;
 
-    public XMLHandler(Collection arg1, nationDatabase2 natDatabase) {
+    public XMLHandler(ArrayList arg1, nationDatabase2 natDatabase) {
 	xmlCol = arg1 ;
         this.natDatabase = natDatabase;
         echoing = true;
@@ -60,11 +60,11 @@ public class XMLHandler extends DefaultHandler {
     // SAX DocumentHandler methods
     //===========================================================
 
-    public void startDocument ()
+    @Override public void startDocument ()
     throws SAXException {
     }
 
-    public void endDocument ()
+    @Override public void endDocument ()
     throws SAXException {
         // tidy variables for GC process
         System.out.println("Tidying parser vars");
@@ -73,7 +73,7 @@ public class XMLHandler extends DefaultHandler {
         UnitValues = null;
     }
 
-    public void startElement (String namespaceURI,
+    @Override public void startElement (String namespaceURI,
 			      String lName, // local name
 			      String qName, // qualified name
 			      Attributes attrs)
@@ -189,7 +189,7 @@ public class XMLHandler extends DefaultHandler {
 	}
     }
 
-    public void endElement(String namespaceURI,
+    @Override public void endElement(String namespaceURI,
                            String lName, // local name
                            String qName  // qualified name
 			   )
@@ -304,7 +304,7 @@ public class XMLHandler extends DefaultHandler {
 	lastCharacters.setLength(0) ;
     }
 
-    public void characters (char buf [], int offset, int len)
+    @Override public void characters (char buf [], int offset, int len)
     throws SAXException {
 	lastCharacters.append(buf, offset, len) ;
     }

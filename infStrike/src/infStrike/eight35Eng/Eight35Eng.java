@@ -1,7 +1,6 @@
 package infStrike.eight35Eng;
 
 import java.awt.Graphics;
-import java.awt.*;
 import java.awt.Color;
 
 public class Eight35Eng {
@@ -17,7 +16,7 @@ public class Eight35Eng {
 
     private int[][] pointArray;
     private int gridSize;
-    private engWorld[] world;
+    private engWorld world;
 
     
 
@@ -84,22 +83,18 @@ public class Eight35Eng {
         order[j] = T2;
     }
 
-    public void quickSort(int lo0,int hi0)
-    {
+    public void quickSort(int lo0,int hi0) {
       int lo=lo0;
       int hi=hi0;
       double mid;
 
-      if (hi0>lo0)
-      {
+      if (hi0>lo0) {
          mid=zValues[(lo0+hi0)>>1];
-         while(lo<=hi)
-         {
+         while(lo<=hi) {
             while ((lo<hi0)&&(zValues[lo]<mid)) ++lo;
             while ((hi>lo0)&&(zValues[hi]>mid)) --hi;
 
-            if (lo<=hi)
-            {
+            if (lo<=hi) {
                swap(lo,hi);
                ++lo;
                --hi;
@@ -110,37 +105,31 @@ public class Eight35Eng {
       }
    }
 
-   public void transform(MyMatrix m)
-   {
-      for (int i=0; i<numberOfObjects; i++)
-      {
-         world[i].transform(m);
-         zValues[i]=-world[i].getAverageZ();
-         order[i]=i;
+   public void transform(engMatrix m) {
+      for (int i=0; i<numberOfObjects; i++) {
+         world.get(i).transform(m);
+         zValues[i] = -world.get(i).getAverageZ();
+         order[i] = i;
       }
       quickSort(0,numberOfObjects-1);
    }
 
-   public void draw(Graphics g,int centerX,int centerY)
-   {
+   public void draw(Graphics g,int centerX,int centerY) {
       for (int i=0; i<numberOfObjects; i++)
-         world[order[i]].draw(g,centerX,centerY);
+         world.get(order[i]).draw(g,centerX,centerY);
    }
 
-   public void fill(Graphics g,int centerX,int centerY)
-   {
+   public void fill(Graphics g,int centerX,int centerY) {
       //for (int i=0; i<numberOfObjects; i++)
          //world[order[i]].fill(g,centerX,centerY);
    }
 
-   public void transformAndFill(MyMatrix m,Graphics g,int centerX,int centerY)
-   {
-      for (int i=0; i<numberOfObjects; i++)
-      {
-         world[order[i]].fill(g,centerX,centerY);
-         world[order[i]].transform(m);
-         zValues[i]=-world[i].getAverageZ();
-         order[i]=i;
+   public void transformAndFill(engMatrix m,Graphics g,int centerX,int centerY) {
+      for (int i=0; i<numberOfObjects; i++) {
+         world.get(order[i]).fill(g,centerX,centerY);
+         world.get(order[i]).transform(m);
+         zValues[i] =- world.get(i).getAverageZ();
+         order[i] = i;
       }
       quickSort(0,numberOfObjects-1);
    }

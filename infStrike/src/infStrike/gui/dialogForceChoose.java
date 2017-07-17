@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class dialogForceChoose extends JDialog {
     JComboBox[] combos;
@@ -14,7 +14,7 @@ public class dialogForceChoose extends JDialog {
     JTextField[] numUnitsTxt;
     int[] numUnitsChoices;
     JButton createBut;
-    Vector unitVec;
+    ArrayList unitAl;
     boolean tmpBoo;
 
     nationDatabase2 natDatabase;
@@ -26,10 +26,10 @@ public class dialogForceChoose extends JDialog {
     *        False if program to generate its own units. User must specify how many units it wants.
     *
     */
-    public dialogForceChoose(int arg1, Vector arg2, boolean arg3, nationDatabase2 arg4) {
+    public dialogForceChoose(int arg1, ArrayList arg2, boolean arg3, nationDatabase2 arg4) {
         combos = new JComboBox[arg1];
         choices = new String[arg1];
-        unitVec = arg2;
+        unitAl = arg2;
         numUnitsTxt = new JTextField[arg1];
         numUnitsChoices = new int[arg1];
         tmpBoo = arg3;
@@ -75,7 +75,7 @@ public class dialogForceChoose extends JDialog {
                 }
                 if(tmpBoo==true) {
                     if(checkNationsWeapons()) {
-                        dialogForceBuild genFrame = new dialogForceBuild(choices, unitVec, natDatabase);
+                        dialogForceBuild genFrame = new dialogForceBuild(choices, unitAl, natDatabase);
                     }
                 }
                 else {

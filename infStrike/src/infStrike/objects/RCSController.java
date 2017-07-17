@@ -81,7 +81,7 @@ public class RCSController extends AIController{
         //intelligence.add(new AIIntelligence(null, null, new java.awt.geom.Point2D.Double(1500.0, 1500.0), -50.0, 100.0  ));
     }
 
-    public void updateGraphics(double time, Graphics2D g2, boolean AIDraw) {
+    @Override public void updateGraphics(double time, Graphics2D g2, boolean AIDraw) {
         //super.updateGraphics(time, g2);
         if (AIDraw) {
             //System.out.println("Controller colour is "+g2.getColor().toString()+" for side "+getSide());
@@ -116,7 +116,7 @@ public class RCSController extends AIController{
         //create search and destroy mission    
 
 
-        //issuse the missions
+        //issue the missions
         processMissionRequests(platoonRequestsHT); 
 
         // remove out-of-date intelligence

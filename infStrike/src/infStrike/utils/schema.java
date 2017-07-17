@@ -1,13 +1,14 @@
 package infStrike.utils;
 
-import java.io.*;
 import java.util.*;
 
 public class schema {
-    private ArrayList attrName = new ArrayList();
-    private ArrayList type = new ArrayList();
+    private ArrayList<String> attrName;
+    private ArrayList<String> type;
 
     public schema() {
+        attrName = new ArrayList<>();
+        type = new ArrayList<>();
     }
 
     public void addAttrName(String arg1) {
@@ -32,10 +33,10 @@ public class schema {
         return true;
     }
 
-    public String toString() {
+    @Override public String toString() {
         String temp = new String();
         for (int i = 0; i < attrName.size(); i++) { 
-            temp += attrName.get(i).toString();
+            temp += attrName.get(i);
             if (i < attrName.size())
                 temp += ", ";
         }

@@ -1,6 +1,7 @@
 package infStrike.objects;
 
 import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Enumeration;
 
@@ -194,7 +195,7 @@ public abstract class nationFile2 {
     /**
     * Makes a unique name. 
     */
-    public String makeName(Vector arg1) {
+    public String makeName(ArrayList arg1) {
         String tmp = null;
         do {
             tmp = (firstNames[(int)(Math.random()*firstNames.length)]+" "+
@@ -207,11 +208,11 @@ public abstract class nationFile2 {
     /**
     * checks that the name (arg1) is not present in the vector arg2.
     */
-    private boolean nameExists(String arg1, Vector arg2) {
+    private boolean nameExists(String arg1, ArrayList arg2) {
         basicUnitInfo tmp;
         String tmpStr;
         for(int i = 0; i < arg2.size(); i++) {
-            tmp = (basicUnitInfo)arg2.elementAt(i);
+            tmp = (basicUnitInfo)arg2.get(i);
             if(tmp.getName().equals(arg1))
                 return true;
         } 
