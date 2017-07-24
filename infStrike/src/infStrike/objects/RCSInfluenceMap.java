@@ -1,11 +1,7 @@
 package infStrike.objects;
 
 import java.awt.Graphics2D;
-import java.util.Vector;
-
 import java.util.ArrayList;
-
-import java.awt.Color;  //delete this
 
 /**
 * Essentialy a 2-dimensional grid 
@@ -16,8 +12,8 @@ public class RCSInfluenceMap {
     
     private double[][] grid;  //do I really need double precision for this?
     private int resolution;
-    private Vector friendlyPositions;  //double array (platoon value, leader.x, leader.y) 
-    private Vector enemyPositions;
+    private ArrayList<RCSInfluenceMapPosition> friendlyPositions;  //double array (platoon value, leader.x, leader.y) 
+    private ArrayList<RCSInfluenceMapPosition> enemyPositions;
 
     private double frontUmbrella = 500.0;
 
@@ -36,8 +32,8 @@ public class RCSInfluenceMap {
         this.type_UNKNOWN = type_UNKNOWN;
 
 
-        this.friendlyPositions = new Vector();
-        this.enemyPositions = new Vector();
+        this.friendlyPositions = new ArrayList();
+        this.enemyPositions = new ArrayList();
     }
 
     public void updateGraphics(double time, Graphics2D g2) {
@@ -49,7 +45,7 @@ public class RCSInfluenceMap {
         }
         RCSInfluenceMapPosition mapPos;
         for(int i=0; i<friendlyPositions.size(); i++) {
-            mapPos = (RCSInfluenceMapPosition)friendlyPositions.elementAt(i);
+            mapPos = friendlyPositions.get(i);
             mapPos.updateGraphics(g2);
         }
     }
@@ -58,7 +54,7 @@ public class RCSInfluenceMap {
     * fVec is a vector containing AIPlatoon objects for the friendly side
     * eIntel is a vector containing AIIntelligence objects
     */
-    public void refreshInfluence(Vector fVec, ArrayList eIntel) {
+    public void refreshInfluence(ArrayList fVec, ArrayList eIntel) {
         calculateInfluence(fVec, eIntel);
     }
 
@@ -86,7 +82,7 @@ public class RCSInfluenceMap {
     * Itterates through a vector of platoons and extracts the relevant influence based information
     * and passes it to the method applyValue.
     */
-    public void calculateInfluence(Vector platoons, ArrayList eIntel) {
+    public void calculateInfluence(ArrayList<AIPlatoon> platoons, ArrayList eIntel) {
         this.grid = new double[grid.length][grid[0].length];
         this.friendlyPositions.clear();
         this.enemyPositions.clear();
@@ -97,8 +93,8 @@ public class RCSInfluenceMap {
         AIPlatoon aip;  
         AIIntelligence aii;  
   
-        for(int i=0; i<platoons.size(); i++) {
-            aip = (AIPlatoon)platoons.elementAt(i);
+        for(int i = 0; i < platoons.size(); i++) {
+            aip = platoons.get(i);
             //platoonValue = aip.getPlatoonValue();
             //platoonDropOff = aip.getPlatoonDropOff();
             platoonX = aip.getLeaderLocation().x;
@@ -124,14 +120,14 @@ public class RCSInfluenceMap {
     * Given a new platoon co-ord if it is within mergeDistance then the new platoons
     * value is merged to the one it is close to, else it is added as a seperate platoon.
     */
-    private void mergeInfluence(Vector positions, double[] newData, AIPlatoon aip) {
+    private void mergeInfluence(ArrayList<RCSInfluenceMapPosition> positions, double[] newData, AIPlatoon aip) {
         int index = -1;
         RCSInfluenceMapPosition mapPos;
         double[] tDoub;
         double mergeDistance = (double)resolution;
         
         for (int i=0; i<positions.size(); i++) {
-            mapPos = (RCSInfluenceMapPosition)positions.elementAt(i);
+            mapPos =  positions.get(i);
             tDoub = mapPos.getCenter();
             if (java.awt.geom.Point2D.distance(tDoub[0], tDoub[1], newData[1], newData[2]) < mergeDistance) {
                 mapPos.addPosition(newData);
@@ -141,7 +137,7 @@ public class RCSInfluenceMap {
             }
         }
         if (index == -1) { // no where near so add seperatly
-            positions.addElement(new RCSInfluenceMapPosition(newData, type_UNKNOWN));
+            positions.add(new RCSInfluenceMapPosition(newData, type_UNKNOWN));
         }
     }
 
@@ -195,8 +191,8 @@ public class RCSInfluenceMap {
     * Vector v contains unsorted platoon clusters 
     * Vector tVec contains sorted and assigned positions
     */
-    private void calculateFF(Vector v) {
-        Vector tVec = new Vector();
+    private void calculateFF(ArrayList v) {
+        ArrayList tVec = new ArrayList();
         orderClusterValues(v, tVec);
         calculateFrontsAndFlanks(v, tVec);
     }
@@ -207,11 +203,11 @@ public class RCSInfluenceMap {
     * the first element of which is the pos totalinfluence value
     * the second element the position of pos in the vector v
     */
-    private void orderClusterValues(Vector x1, Vector x2) {
+    private void orderClusterValues(ArrayList<RCSInfluenceMapPosition> x1, ArrayList x2) {
         RCSInfluenceMapPosition pos;
 
         for (int i=0; i<x1.size(); i++) {
-            pos = (RCSInfluenceMapPosition)x1.elementAt(i);
+            pos = x1.get(i);
             addDoubleHigh(x2, new double[] {pos.getTotalValue(), (double)i});
         }
     }
@@ -221,20 +217,20 @@ public class RCSInfluenceMap {
     * array and assigns it to pos1. v1 is then itterated through using pos2.
     * If pos2 is within 'frontUmbrella' then it is pos1's flank, else it is a new front.
     */
-    private void calculateFrontsAndFlanks(Vector v1, Vector v2) {
+    private void calculateFrontsAndFlanks(ArrayList<RCSInfluenceMapPosition> v1, ArrayList<double[]> v2) {
         RCSInfluenceMapPosition pos1;
         RCSInfluenceMapPosition pos2;
         double[] d;
 
         for (int i=0; i< v2.size(); i++) {
-            d = (double[])v2.elementAt(i);
-            pos1 = (RCSInfluenceMapPosition)v1.elementAt((int)d[1]);
+            d = v2.get(i);
+            pos1 = v1.get((int)d[1]);
             if ( pos1.getType().equals(type_UNKNOWN)) {
                 pos1.setType(type_FRONT);
                 pos1.informUmbrella(frontUmbrella);
                 pos1.setOwns(pos1);   //has to added to make itterations in RCSIMP easier
                 for (int j=0; j<v1.size(); j++) {
-                    pos2 = (RCSInfluenceMapPosition)v1.elementAt(j);
+                    pos2 = v1.get(j);
                     if ((int)d[1] != j & pos2.getType().equals(type_UNKNOWN)) {
                         if (java.awt.geom.Point2D.distance(pos1.getCenter()[0], pos1.getCenter()[1], pos2.getCenter()[0], pos2.getCenter()[1]) < frontUmbrella) {
                             pos2.setType(type_FLANK);
@@ -253,7 +249,7 @@ public class RCSInfluenceMap {
     * a rear position is one that is behind the influence of the front, when a line
     * is drawn from the enemy front to itself and passes through the friendly front
     */
-    private void calculateR(Vector v, Vector v2) {
+    private void calculateR(ArrayList<RCSInfluenceMapPosition> v, ArrayList<RCSInfluenceMapPosition> v2) {
         RCSInfluenceMapPosition pos1;
         RCSInfluenceMapPosition pos2;
         int index = -1;
@@ -261,10 +257,10 @@ public class RCSInfluenceMap {
 
         // find the first friendly front
         for (int i=0; i<v.size(); i++) {
-            pos1 = (RCSInfluenceMapPosition)v.elementAt(i);
+            pos1 = v.get(i);
             if (pos1.getType().equals(type_FRONT)) {
                 for (int j=0; j<v2.size(); j++) {   //find the closest enemy
-                    pos2 = (RCSInfluenceMapPosition)v2.elementAt(j);
+                    pos2 = v2.get(j);
                     if (pos2.getType().equals(type_FRONT)) {
                         if (java.awt.geom.Point2D.distance(pos1.getCenter()[0], pos1.getCenter()[1], pos2.getCenter()[0], pos2.getCenter()[1]) < distance ) {
                             distance  = java.awt.geom.Point2D.distance(pos1.getCenter()[0], pos1.getCenter()[1], pos2.getCenter()[0], pos2.getCenter()[1]);
@@ -273,17 +269,17 @@ public class RCSInfluenceMap {
                     }
                 }
                 if (index != -1) {
-                    pos2 = (RCSInfluenceMapPosition)v2.elementAt(index);   // the closest enemy front
+                    pos2 = v2.get(index);   // the closest enemy front
                     pos1.passesThrough(pos2, type_REAR);  // now find the rear clusters
                 }
             }
         }
     }
 
-    private void calculateAttack(Vector v1) {
+    private void calculateAttack(ArrayList<RCSInfluenceMapPosition> v1) {
         RCSInfluenceMapPosition pos1;
         for (int i=0; i<v1.size(); i++) {
-            pos1 = ((RCSInfluenceMapPosition)v1.elementAt(i));
+            pos1 = v1.get(i);
             if (pos1.getType().equals(type_FRONT)) 
                 pos1.calcAllAttackValues(new String[]{type_REAR, type_UNKNOWN});
         }
@@ -293,21 +289,21 @@ public class RCSInfluenceMap {
     * Given a double array d, it will be added in to the vector v so that the 
     * highest value is a 0 and the lowest at n-1.
     */
-    private void addDoubleHigh(Vector v, double[] d) {
+    private void addDoubleHigh(ArrayList<double[]> v, double[] d) {
         int index = 0;
 
         for (int i=0; i<v.size(); i++) {
-            if ( ((double[])v.elementAt(i))[0] < d[0] ) 
+            if ( v.get(i)[0] < d[0] ) 
                 break;
             index = i;
         }
         
         if (index != v.size()-1) { 
-            v.insertElementAt(d, index);
+            v.add(index, d);
         } else { 
-            v.addElement(d); 
+            v.add(d); 
         }
     }
 
-    public Vector getFriendlyPositions() { return friendlyPositions; }
+    public ArrayList getFriendlyPositions() { return friendlyPositions; }
 }

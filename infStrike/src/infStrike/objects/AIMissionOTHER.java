@@ -11,5 +11,5 @@ public class AIMissionOTHER extends AIMission {
         this(type, ID, new Point2D.Double[]{arg2}, base);
     }
  
-    public void endMission(AIPlatoon arg1) { arg1.setMission(new AIMissionRTB("RTB", "RTB", getBase().getCor(), getBase())); }
+    @Override public void endMission(AIPlatoon arg1) { arg1.setMission(new AIMissionRTB("RTB", "RTB", getBase().getCor(), getBase())); }
 }

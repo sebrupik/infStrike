@@ -126,9 +126,9 @@ public class Blackboard {
         }
     }
 
-    public void addPlatoonSpecificMission(Vector v) {
+    public void addPlatoonSpecificMission(ArrayList<BlackboardPlatoonSpecificMission> v) {
         for (int i=0; i<v.size(); i++) {
-            this.addPlatoonSpecificMission((BlackboardPlatoonSpecificMission)v.elementAt(i));
+            this.addPlatoonSpecificMission(v.get(i));
         }
     }
 

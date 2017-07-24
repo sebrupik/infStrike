@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Enumeration;
 
 /**
@@ -36,7 +37,7 @@ public class RCSController extends AIController{
     private int mission_locate; // go to a point and circle concentricaly outwards and then return
 
     private ArrayList platoonRequests;
-    private Hashtable platoonRequestsHT;
+    private HashMap<String, ArrayList> platoonRequestsHT;
     private ArrayList tempAL;
     private ArrayList intelligence;
 
@@ -69,7 +70,7 @@ public class RCSController extends AIController{
         this.PF = new RCSPathfinder(world);
 
         this.platoonRequests = new ArrayList();
-        this.platoonRequestsHT = new Hashtable();
+        this.platoonRequestsHT = new HashMap();
         this.intelligence = new ArrayList();
 
         this.AIMP = new AIMissionPriority(new String[]{mission_MISSION, mission_WAIT_AT_BASE, mission_ATTACK, mission_ATTACK_LOCATION, 
@@ -128,10 +129,10 @@ public class RCSController extends AIController{
     * tactical standing using the arguments passed in this method.
     * Subsequent mission will be either attack, support or move types.
     */
-    public void issueMissions(Vector friendlyPositions) {
+    public void issueMissions(ArrayList<RCSInfluenceMapPosition> friendlyPositions) {
         RCSInfluenceMapPosition pos1;
         for (int i=0 ;i<friendlyPositions.size(); i++) {
-            pos1 = (RCSInfluenceMapPosition)friendlyPositions.elementAt(i);   
+            pos1 = friendlyPositions.get(i);   
             if (pos1.getType().equals(type_FRONT)) {
                 if (pos1.getTacticalStanding() * ((2*trait_aggresion)-1) > 0.0 ) {   //can attack
                     issueAttackMissions(pos1.getOwns(), 0.0);
@@ -146,16 +147,16 @@ public class RCSController extends AIController{
     /**
     * the argument 'filter' is used to decide which clusters can attack
     */
-    private void issueAttackMissions(Vector v1, double filter) {
+    private void issueAttackMissions(ArrayList<RCSInfluenceMapPosition> v1, double filter) {
         //System.out.println("RCSController/issueAttackMissions - begining execution");
         RCSInfluenceMapPosition pos1;
         RCSInfluenceMapPosition pos2;
 
         for (int i=0; i<v1.size(); i++) {
-            pos1 = (RCSInfluenceMapPosition)v1.elementAt(i);
+            pos1 = v1.get(i);
             if (pos1.getTargets().size() > 0) {
-                if (((objectTarget)pos1.getTargets().elementAt(0)).attack_value > filter ) { 
-                    pos2 = ((objectTarget)pos1.getTargets().elementAt(0)).target;
+                if (((objectTarget)pos1.getTargets().get(0)).attack_value > filter ) { 
+                    pos2 = ((objectTarget)pos1.getTargets().get(0)).target;
                     bb.addPlatoonSpecificMission(pos1.availableForMission(new AIMissionOTHER(mission_ATTACK_LOCATION, "Special Attack", new java.awt.geom.Point2D.Double(pos2.getCenter()[0], pos2.getCenter()[1]), super.getNearestBase(pos2.getCenter()))));
                 }
             }
@@ -166,12 +167,12 @@ public class RCSController extends AIController{
     /**
     * 
     */
-    public void receiveRequest(AIRequest arg1) { 
+    @Override public void receiveRequest(AIRequest arg1) { 
         //System.out.println("RCSController"+this.getSide()+"Request from "+arg1.getRequester().getClass()+" for "+arg1.getRequest() );
         processRequest(arg1);
     }
 
-    public void addSpecificMission(AIPlatoon platoon, AIMission mission) {
+    @Override public void addSpecificMission(AIPlatoon platoon, AIMission mission) {
         bb.addPlatoonSpecificMission(new BlackboardPlatoonSpecificMission(platoon.getID(), mission));
     }
 
@@ -281,18 +282,19 @@ public class RCSController extends AIController{
     }
 
     /**
-    * The controller must choose a suitabe mission
-    * prehaps have a 2 element array. The first containing a double 0.0-1.0 represeting
-    * priority and the 2nd element the mission type.
-    * pass this info to the balckboard to try and get relevant missions.
+    * The controller must choose a suitable mission
+    * perhaps have a 2 element array. The first containing a double 0.0-1.0 
+    * representing priority and the 2nd element the mission type.
+    * pass this info to the blackboard to try and get relevant missions.
     * how do I come up with these numbers?!
     */
-    private void processMissionRequests(Hashtable ht) {
+    private void processMissionRequests(HashMap<String, ArrayList> hm) {
         String tmpStr; 
 
-        for (Enumeration e = ht.keys() ; e.hasMoreElements() ;) {
-             tmpStr = (String)e.nextElement();
-             bb.getMissions((ArrayList)ht.get(tmpStr), AIMP, tmpStr);  //pass the arraylist and base name
+        //for (Enumeration e = hm.keys() ; e.hasMoreElements() ;) {
+        for(String e : hm.keySet()) {
+             //tmpStr = e.get();
+             bb.getMissions(hm.get(e), AIMP, e);  //pass the arraylist and base name
         }
     }
 }

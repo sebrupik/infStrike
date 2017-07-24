@@ -4,19 +4,19 @@ import java.awt.Color;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class RCSInfluenceMapPosition {
     private double totalValue;
     private double[] center = new double[2];
-    private Vector positions;               // vector of double arrays containing co-ords for all member AIPlatoons
-    private Vector platoons;                // all the AIPlatoons memebrs of this positions
+    private ArrayList<double[]> positions;               // vector of double arrays containing co-ords for all member AIPlatoons
+    private ArrayList<AIPlatoon> platoons;                // all the AIPlatoons memebrs of this positions
     private String type;                    // front, flank, rear
     private RCSInfluenceMapPosition owner;  // FLANKS ONLY! the FRONT that this FLANK belongs to.
     private RCSInfluenceMapPosition enemy;  // the closest enemy front
-    private Vector owns;                    // FRONTS ONLY! vector for postions owned by this FRONT
+    private ArrayList<RCSInfluenceMapPosition> owns;                    // FRONTS ONLY! vector for postions owned by this FRONT
       
-    private Vector targets;                 // vector of objectTargets'
+    private ArrayList targets;                 // vector of objectTargets'
     private double tactical_standing;
 
     private double[] enemyPos;
@@ -27,15 +27,15 @@ public class RCSInfluenceMapPosition {
 
     public RCSInfluenceMapPosition(double[] arg1, String type) {
         this.center = new double[2];
-        this.positions = new Vector();
-        this.platoons = new Vector();
+        this.positions = new ArrayList();
+        this.platoons = new ArrayList();
         this.addPosition(arg1);
 
         this.amplifier = 1;
         this.type = type;
 
-        this.owns = new Vector();
-        this.targets = new Vector();
+        this.owns = new ArrayList();
+        this.targets = new ArrayList();
     }
 
     public void updateGraphics(Graphics2D g2) {
@@ -45,7 +45,7 @@ public class RCSInfluenceMapPosition {
  
         double[] tDoub;
         for (int i=0; i<positions.size(); i++) {
-            tDoub = (double[])positions.elementAt(i);
+            tDoub = positions.get(i);
             g2.drawLine((int)center[0], (int)center[1], (int)tDoub[1], (int)tDoub[2]);
             g2.drawString(type+" ("+totalValue+")"+"("+tactical_standing+")", (int)center[0], (int)center[1]);
         }
@@ -53,7 +53,7 @@ public class RCSInfluenceMapPosition {
         RCSInfluenceMapPosition pos1;
         g2.setColor(Color.yellow);
         for (int i=0; i<owns.size(); i++) {
-            pos1 = (RCSInfluenceMapPosition)owns.elementAt(i);
+            pos1 = owns.get(i);
             g2.drawLine((int)center[0], (int)center[1], (int)pos1.getCenter()[0], (int)pos1.getCenter()[1]);
         }
         g2.setColor(c1);
@@ -74,26 +74,26 @@ public class RCSInfluenceMapPosition {
     * recalculated
     */
     public void addPosition(double[] position) {
-        positions.addElement(position);
+        positions.add(position);
         recalculate();
     }
 
     public void addPlatoon(AIPlatoon aip) {
-        platoons.addElement(aip);
+        platoons.add(aip);
     }
 
     /**
     * Recalculate the center and total influcence value for this cluster of platoons
     */
     private void recalculate() { 
-        double[] tDoub = (double[])positions.elementAt(0);
+        double[] tDoub = positions.get(0);
 
         totalValue = tDoub[0];
         center[0] = tDoub[1];  // x
         center[1] = tDoub[2];  // y
         
         for (int i=1; i<positions.size(); i++) {
-            tDoub = (double[])positions.elementAt(i);
+            tDoub = positions.get(i);
             totalValue += tDoub[0];
             center[0] += tDoub[1];  // x
             center[1] += tDoub[2];  // y
@@ -116,7 +116,7 @@ public class RCSInfluenceMapPosition {
  
         // i =1 because the first element (0) is the front itself.
         for (int i=1; i<owns.size(); i++) {
-            pos1 = (RCSInfluenceMapPosition)owns.elementAt(i);
+            pos1 = owns.get(i);
              
             if ( rect.intersectsLine(enemyPos[0], enemyPos[1], pos1.getCenter()[0], pos1.getCenter()[1])) {
                 pos1.setType(type_REAR);
@@ -130,7 +130,7 @@ public class RCSInfluenceMapPosition {
     public void calcAllAttackValues(String[] noAttack) {
         targets.clear();             //is this nessecary?
         for (int i=0; i<owns.size(); i++) { 
-            enemy.calcAttackValue((RCSInfluenceMapPosition)owns.elementAt(i), noAttack);
+            enemy.calcAttackValue(owns.get(i), noAttack);
         }
         calcTacticalStanding();
         //System.out.println("do I have any targets? : "+targets.size());
@@ -147,7 +147,7 @@ public class RCSInfluenceMapPosition {
         double attack_value;
 
         for (int i=0; i<owns.size(); i++) {
-            pos2 = (RCSInfluenceMapPosition)owns.elementAt(i); 
+            pos2 = owns.get(i); 
             if ( isMember(pos2.getType(), noAttack) == false ) {
                 attack_value = (pos1.getTotalValue()-pos2.getTotalValue()) / java.awt.geom.Point2D.distance(pos1.getCenter()[0], pos1.getCenter()[1], pos2.getCenter()[0], pos2.getCenter()[1]);
                 pos1.addDoubleHigh(pos1.getTargets(), new objectTarget( attack_value, pos2 ));
@@ -159,7 +159,7 @@ public class RCSInfluenceMapPosition {
         double tDoub = 0.0;
 
         for (int i=0; i<owns.size(); i++) {
-            tDoub += ((RCSInfluenceMapPosition)owns.elementAt(i)).getTotalValue();
+            tDoub += owns.get(i).getTotalValue();
         }
         tactical_standing = tDoub/owns.size();
     }
@@ -171,7 +171,7 @@ public class RCSInfluenceMapPosition {
     public void recieveMission(AIMission mission) {
         System.out.println("A mission is being recieved of type "+mission.getType());
         for (int i=0; i<platoons.size(); i++) {
-            ((AIPlatoon)platoons.elementAt(i)).setMission(mission);
+            platoons.get(i).setMission(mission);
         }
     }
 
@@ -180,14 +180,14 @@ public class RCSInfluenceMapPosition {
     * available for the new mission
     * returns a vector of BlackboardPlatoonSpecificMission's
     */
-    public Vector availableForMission(AIMission mission) {
-        Vector v = new Vector();
+    public ArrayList availableForMission(AIMission mission) {
+        ArrayList v = new ArrayList();
         AIPlatoon aip;
 
         for (int i=0; i<platoons.size(); i++) {
-            aip = (AIPlatoon)platoons.elementAt(i);
+            aip = platoons.get(i);
             if (aip.getMission() != null && aip.getMission().getWaiting()) 
-                v.addElement(new BlackboardPlatoonSpecificMission(aip.getID(), mission));
+                v.add(new BlackboardPlatoonSpecificMission(aip.getID(), mission));
             
         }
         return v;
@@ -207,29 +207,29 @@ public class RCSInfluenceMapPosition {
     * Given a object array d, it will be added in to the vector v so that the 
     * highest value is a 0 and the lowest at n-1.
     */
-    private void addDoubleHigh(Vector v, objectTarget d) {
+    private void addDoubleHigh(ArrayList<objectTarget> v, objectTarget d) {
         int index = 0;
         for (int i=0; i<v.size(); i++) {
-            if ( ((objectTarget)v.elementAt(i)).attack_value < d.attack_value ) 
+            if ( v.get(i).attack_value < d.attack_value ) 
                 break;
             index = i;
         }
         
         if (index != v.size()-1) { 
-            v.insertElementAt(d, index);
-        } else { v.addElement(d); }
+            v.add(index, d);
+        } else { v.add(d); }
     }
 
     public void informUmbrella(double umb) { this.umb= umb; }
 
     public void setType(String type) { this.type = type; }
-    public void setOwns(RCSInfluenceMapPosition mp) { this.owns.addElement(mp); }
+    public void setOwns(RCSInfluenceMapPosition mp) { this.owns.add(mp); }
     public void setOwner(RCSInfluenceMapPosition owner) { this.owner = owner; }
 
     public double[] getCenter() { return center; }
     public double getTotalValue() { return totalValue; }
     public double getTacticalStanding() { return tactical_standing; };
     public String getType() { return type; }
-    public Vector getTargets() { return targets; }
-    public Vector getOwns() { return owns; }
+    public ArrayList getTargets() { return targets; }
+    public ArrayList getOwns() { return owns; }
 }
