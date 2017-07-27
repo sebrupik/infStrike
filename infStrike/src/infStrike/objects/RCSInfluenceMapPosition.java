@@ -16,7 +16,7 @@ public class RCSInfluenceMapPosition {
     private RCSInfluenceMapPosition enemy;  // the closest enemy front
     private ArrayList<RCSInfluenceMapPosition> owns;                    // FRONTS ONLY! vector for postions owned by this FRONT
       
-    private ArrayList targets;                 // vector of objectTargets'
+    private ArrayList<objectTarget> targets;                 // vector of objectTargets'
     private double tactical_standing;
 
     private double[] enemyPos;
@@ -27,15 +27,15 @@ public class RCSInfluenceMapPosition {
 
     public RCSInfluenceMapPosition(double[] arg1, String type) {
         this.center = new double[2];
-        this.positions = new ArrayList();
-        this.platoons = new ArrayList();
+        this.positions = new ArrayList<>();
+        this.platoons = new ArrayList<>();
         this.addPosition(arg1);
 
         this.amplifier = 1;
         this.type = type;
 
-        this.owns = new ArrayList();
-        this.targets = new ArrayList();
+        this.owns = new ArrayList<>();
+        this.targets = new ArrayList<>();
     }
 
     public void updateGraphics(Graphics2D g2) {
@@ -180,8 +180,8 @@ public class RCSInfluenceMapPosition {
     * available for the new mission
     * returns a vector of BlackboardPlatoonSpecificMission's
     */
-    public ArrayList availableForMission(AIMission mission) {
-        ArrayList v = new ArrayList();
+    public ArrayList<BlackboardPlatoonSpecificMission> availableForMission(AIMission mission) {
+        ArrayList<BlackboardPlatoonSpecificMission> v = new ArrayList<>();
         AIPlatoon aip;
 
         for (int i=0; i<platoons.size(); i++) {
@@ -230,6 +230,6 @@ public class RCSInfluenceMapPosition {
     public double getTotalValue() { return totalValue; }
     public double getTacticalStanding() { return tactical_standing; };
     public String getType() { return type; }
-    public ArrayList getTargets() { return targets; }
-    public ArrayList getOwns() { return owns; }
+    public ArrayList<objectTarget> getTargets() { return targets; }
+    public ArrayList<RCSInfluenceMapPosition> getOwns() { return owns; }
 }

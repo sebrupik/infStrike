@@ -1,9 +1,9 @@
 package infStrike.objects;
 
-import java.util.Vector;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public abstract class nationFile2 {
     private String nation;
@@ -17,8 +17,8 @@ public abstract class nationFile2 {
     private String[] firstNames;
     private String[] lastNames;
 
-    private Vector weapVec;
-    private Vector weapClassVec;
+    private ArrayList<String[]> weapVec;
+    private ArrayList<weapFile> weapClassVec;
 
     private weapFile tmpWeapFile;
 
@@ -34,13 +34,13 @@ public abstract class nationFile2 {
         this.firstNames = arg2;
         this.lastNames = arg3;
     }
-    public void loadWeaponInfo(Vector arg1) {
+    public void loadWeaponInfo(ArrayList<String[]> arg1) {
         System.out.println("nationFile2/loadWeaponInfo - Initialising");
         this.weapVec = arg1;
         sortWeapVec(weapVec);
         System.out.println("nationFile2/loadWeaponInfo - Finished");
     }
-    public void loadWeaponClasses(Vector arg1) {
+    public void loadWeaponClasses(ArrayList<weapFile> arg1) {
         System.out.println("nationFile2/loadWeaponClasses - Initialising");
         this.weapClassVec = arg1;
         System.out.println("nationFile2/loadWeaponClasses - Finished");
@@ -53,54 +53,58 @@ public abstract class nationFile2 {
     * The weapVec will contain string arrays with the following elements:
     * weapon name, primary/secondary, weapon type/user, weapon mag, mag capacity, calibre
     */
-    private void sortWeapVec(Vector arg1) {
-        Vector tmpPri = new Vector();
-        Vector tmpSec = new Vector();
-        Vector tmpVec;
+    private void sortWeapVec(ArrayList<String[]> arg1) {
+        ArrayList<String[]> tmpPri = new ArrayList<>();
+        ArrayList tmpSec = new ArrayList();
+        ArrayList<String[]> tmpVec;
         String[] tmpStrAr;
         String tmpStr;
-        Hashtable tmpHash = new Hashtable();
+        HashMap<String, ArrayList> tmpHash = new HashMap<>();
         
         // split the vector into primary and secondary , and split the primary into weapon user groups
         if(arg1.size() > 0) {
             for(int i=0; i < arg1.size(); i++) {
-                tmpStrAr = (String[])arg1.elementAt(i);
+                tmpStrAr = arg1.get(i);
                 if(tmpStrAr[1].equals("Primary")) {
                     if(tmpHash.containsKey(tmpStrAr[2].trim())) {             //weapon user
-                        tmpVec = (Vector)tmpHash.get(tmpStrAr[2].trim());
-                        tmpVec.addElement(tmpStrAr);
+                        tmpVec = tmpHash.get(tmpStrAr[2].trim());
+                        tmpVec.add(tmpStrAr);
                     }
                     else {
-                        tmpVec = new Vector();
-                        tmpVec.addElement(tmpStrAr);
+                        tmpVec = new ArrayList<>();
+                        tmpVec.add(tmpStrAr);
                         tmpHash.put(tmpStrAr[2].trim(), tmpVec);
                     } 
                 }
                 if(tmpStrAr[1].equals("Secondary"))
-                    tmpSec.addElement(tmpStrAr[0]);
+                    tmpSec.add(tmpStrAr[0]);
             }
             //weapPri = new String[tmpHash.size()];
             
         }
 
         // the primary weapons are now grouped into weapon user groups
-        Enumeration e1 = tmpHash.keys();
-        while (e1.hasMoreElements()) {
-            tmpStr = (String)e1.nextElement();
-            tmpVec = (Vector)tmpHash.get(tmpStr);
+        //Enumeration e1 = tmpHash.keys();
+        //while (e1.hasMoreElements()) {
+            
+        for(String s : tmpHash.keySet()) {   
+            //tmpStr = (String)e1.nextElement();
+            tmpVec = tmpHash.get(s);
             for (int i=0; i < tmpVec.size(); i++) {
                 //tmpStrAr = (String[])tmpVec.elementAt(i);
                 //tmpPri.addElement(tmpStrAr[0]);
-                Object o = tmpVec.elementAt(i);
-                tmpPri.addElement((String[])tmpVec.elementAt(i));
+                Object o = tmpVec.get(i);
+                tmpPri.add(tmpVec.get(i));
             }
         }
         //weapPri = new String[tmpPri.size()];
         //tmpPri.copyInto(weapPri);
         //weapPri = (String[])tmpPri.toArray();
-        tmpSec.add(0, "Empty");
-        weapSec = new String[tmpSec.size()];
-        tmpSec.copyInto(weapSec);
+        
+        //tmpSec.add(0, "Empty");
+        //weapSec = new String[tmpSec.size()];
+        //tmpSec.copyInto(weapSec);
+        weapSec = (String[])tmpSec.toArray();
 
         weapPri = new String[tmpPri.size()+1];
         weaponUser = new String[tmpPri.size()+1];
@@ -115,7 +119,7 @@ public abstract class nationFile2 {
         ammoPri[0] = "Empty";
 
         for(int i=0; i<tmpPri.size(); i++) {
-            tmpStrAr = (String[])tmpPri.elementAt(i);
+            tmpStrAr = tmpPri.get(i);
             weapPri[i+1] = tmpStrAr[0];
             weaponUser[i+1] = tmpStrAr[2];
             magPri[i+1] = tmpStrAr[3];
@@ -154,7 +158,7 @@ public abstract class nationFile2 {
     */
     public weapFile weapLoader(String arg1) {
         for (int i=0; i<weapClassVec.size(); i++) {
-            tmpWeapFile = (weapFile)weapClassVec.elementAt(i);
+            tmpWeapFile = weapClassVec.get(i);
             if (tmpWeapFile.getName().equals(arg1)) {
                 return tmpWeapFile.newInstance();
             }
@@ -195,7 +199,7 @@ public abstract class nationFile2 {
     /**
     * Makes a unique name. 
     */
-    public String makeName(ArrayList arg1) {
+    public String makeName(ArrayList<basicUnitInfo> arg1) {
         String tmp = null;
         do {
             tmp = (firstNames[(int)(Math.random()*firstNames.length)]+" "+
@@ -208,11 +212,11 @@ public abstract class nationFile2 {
     /**
     * checks that the name (arg1) is not present in the vector arg2.
     */
-    private boolean nameExists(String arg1, ArrayList arg2) {
+    private boolean nameExists(String arg1, ArrayList<basicUnitInfo> arg2) {
         basicUnitInfo tmp;
         String tmpStr;
         for(int i = 0; i < arg2.size(); i++) {
-            tmp = (basicUnitInfo)arg2.get(i);
+            tmp = arg2.get(i);
             if(tmp.getName().equals(arg1))
                 return true;
         } 

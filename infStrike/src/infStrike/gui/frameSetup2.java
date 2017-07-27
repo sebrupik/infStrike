@@ -194,7 +194,7 @@ public class frameSetup2 extends JFrame {
                     Toolkit.getDefaultToolkit().beep();
                     return;
                 }
-                dialogUnitSaver saveFrame = new dialogUnitSaver(unitVec);
+                dialogUnitSaver saveFrame = new dialogUnitSaver(unitAl);
             }
         });
         buildArenaBut.addActionListener(new ActionListener() {
@@ -226,7 +226,7 @@ public class frameSetup2 extends JFrame {
                 
                 if (varStore.getArenaBoo()) {
                     JFrame arEditor = new frameArenaEditor(0,0,0,varStore.getArenaPlan());
-                    arEditor.show();
+                    arEditor.setVisible(true);
                 }
             }
         });

@@ -28,7 +28,7 @@ public class topoObj {
     private topoMerger tMerger;
 
     /**
-    * To the best of my recolection the topoObj only needs be able to give out a height value given any 2D co-od, 
+    * To the best of my recollection the topoObj only needs be able to give out a height value given any 2D co-od, 
     * and also to provide a draw method. Anything else goes for this set to monster-mash classes.
     */
 

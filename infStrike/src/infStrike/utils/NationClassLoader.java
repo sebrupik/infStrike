@@ -13,7 +13,7 @@ public final class NationClassLoader extends URLClassLoader {
     URLClassLoader jarLoader;
     nationFile2 natFile;
 
-    public NationClassLoader(URL[] urls, ArrayList nations) {
+    public NationClassLoader(URL[] urls, ArrayList<nationFile2> nations) {
         super(urls);
 		
         for (URL url : urls) {

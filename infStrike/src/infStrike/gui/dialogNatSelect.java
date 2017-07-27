@@ -67,7 +67,7 @@ public class dialogNatSelect extends JDialog {
         setSize(300, 150);
         setResizable(false);
         pack();
-        show();    
+        setVisible(true);    
     }
     void buildConstraints(GridBagConstraints gbc, int gx, int gy, int gw, int gh, int wx, int wy) {
         gbc.gridx = gx;

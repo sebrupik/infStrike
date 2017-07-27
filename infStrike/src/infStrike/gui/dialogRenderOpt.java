@@ -50,7 +50,7 @@ public class dialogRenderOpt extends JDialog {
         setSize(300, 150);
         setResizable(false);
         pack();
-        show();
+        setVisible(true);
     }
 
     /**

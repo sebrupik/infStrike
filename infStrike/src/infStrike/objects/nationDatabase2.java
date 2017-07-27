@@ -16,30 +16,26 @@ import infStrike.utils.jarCustomExtractor;
 import infStrike.utils.WeaponClassLoader;
 import infStrike.utils.NationClassLoader;
 
-import java.util.Hashtable;
-import java.util.Vector;
-import java.io.File;
+import java.util.ArrayList;
 import java.net.*;
 import javax.swing.ImageIcon;
-
-import java.util.Enumeration;
 
 public class nationDatabase2 {
    
     // Vectors containing specific classes.
-    Vector allWeapons;
-    Vector allNations;        
+    ArrayList<weapFile> allWeapons;
+    ArrayList<nationFile2> allNations;        
     
     // Vectors containg JAR URLs
-    Vector jarsWeapons;
-    Vector jarsNations;
+    ArrayList<URL> jarsWeapons;
+    ArrayList<URL> jarsNations;
 
-    Vector tmpVec;
+    ArrayList tmpVec;
     nationFile2 tmpNatFile;
     weapFile tmpWeapFile;
     String[] tmpStrAr;
 
-    public nationDatabase2(Vector[] arg1) {
+    public nationDatabase2(ArrayList[] arg1) {
         System.out.println("nationDatabase2 - initialising");
         this.allWeapons = arg1[0];
         this.allNations = arg1[1];
@@ -57,7 +53,7 @@ public class nationDatabase2 {
     public String[] getAllNations() {
         String tmpStr[] = new String[allNations.size()];
         for (int i=0; i<allNations.size(); i++) {
-            tmpNatFile = (nationFile2)allNations.elementAt(i);
+            tmpNatFile = allNations.get(i);
             tmpStr[i] = tmpNatFile.getNation();
         }
         java.util.Arrays.sort(tmpStr);
@@ -69,7 +65,7 @@ public class nationDatabase2 {
     */
     public nationFile2 getNationFile(String arg1) {
         for (int i = 0; i < allNations.size(); i++) {
-            tmpNatFile = (nationFile2)allNations.elementAt(i);
+            tmpNatFile = allNations.get(i);
             if(arg1.equals(tmpNatFile.getNation()))
                 return tmpNatFile;
         }
@@ -84,7 +80,7 @@ public class nationDatabase2 {
     public boolean checkItems(basicUnitInfo arg1) {
         System.out.println("nationDatabase2 - checkItems starting");
         for (int i = 0; i < allNations.size(); i++) {
-            tmpNatFile = (nationFile2)allNations.elementAt(i);
+            tmpNatFile = allNations.get(i);
             if(arg1.getNation().equals(tmpNatFile.getNation()))
                 if(tmpNatFile.checkItems(arg1))
                     return true;
@@ -101,7 +97,7 @@ public class nationDatabase2 {
     public weapMagObj weapLoadout(String arg1, String arg2, String arg3, String arg4, String arg5, String arg6,
                                            String arg7, String arg8, String arg9, String arg10, String arg11) {
         for (int i = 0; i < allNations.size(); i++) {
-            tmpNatFile = (nationFile2)allNations.elementAt(i);
+            tmpNatFile = allNations.get(i);
             if(arg1.equals(tmpNatFile.getNation()))
                 return tmpNatFile.weapLoadout(arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
         }
@@ -113,14 +109,15 @@ public class nationDatabase2 {
     * Used in class gui/weaponInfo
     */
     public String[] getAllWeaponNames() {
-        tmpVec = new Vector();
+        tmpVec = new ArrayList<weapFile>();
         for (int i=0; i<allWeapons.size(); i++) {
-            tmpWeapFile = (weapFile)allWeapons.elementAt(i);
-            tmpVec.addElement(tmpWeapFile.getName());
+            tmpWeapFile = allWeapons.get(i);
+            tmpVec.add(tmpWeapFile.getName());
         }
         //return (String[])tmpVec.toArray();
-        tmpStrAr = new String[tmpVec.size()];
-        tmpVec.copyInto(tmpStrAr);
+        //tmpStrAr = new String[tmpVec.size()];
+        //tmpVec.copyInto(tmpStrAr);
+        tmpStrAr = (String[])tmpVec.toArray();
         java.util.Arrays.sort(tmpStrAr);  //sorts the array alphabeticaly
         return tmpStrAr;
     }
@@ -132,9 +129,9 @@ public class nationDatabase2 {
     */
     public String getWeapInfo(String arg1) {
         for (int i=0; i<allWeapons.size(); i++) {
-            tmpWeapFile = (weapFile)allWeapons.elementAt(i);
+            tmpWeapFile = allWeapons.get(i);
             if(tmpWeapFile.getName().equals(arg1)) {
-                return new jarCustomExtractor((URL)jarsWeapons.elementAt(i)).extractInfo();
+                return new jarCustomExtractor(jarsWeapons.get(i)).extractInfo();
             }
         }
         return "";
@@ -142,26 +139,26 @@ public class nationDatabase2 {
    
     /**
     * Used in class gui/weaponInfo & gui/dialogForceBuild
-    * arg1 : either 'nation' or 'weapon'
-    * arg2 : name of picture to be extracted
+    * @param arg1 : either 'nation' or 'weapon'
+    * @param arg2 : name of picture to be extracted
     */
     public ImageIcon getPic(String arg1, String arg2) {
         System.out.println("nationDatabase2/getPic - initialising");
         if(arg1.equals("WEAPON")) {
             System.out.println("nationDatabase2/getPic - WEAPON : "+arg2);
             for (int i=0; i<allWeapons.size(); i++) {
-                tmpWeapFile = (weapFile)allWeapons.elementAt(i);
+                tmpWeapFile = allWeapons.get(i);
                 if(tmpWeapFile.getName().equals(arg2)) {
-                    return new jarCustomExtractor((URL)jarsWeapons.elementAt(i)).extractImage();
+                    return new jarCustomExtractor(jarsWeapons.get(i)).extractImage();
                 }
             }
         }
         if(arg1.equals("NATION")) {
             System.out.println("nationDatabase2/getPic - NATION : "+arg2);          
             for (int i=0; i<allNations.size(); i++) {
-                tmpNatFile = (nationFile2)allNations.elementAt(i);
+                tmpNatFile = allNations.get(i);
                 if(tmpNatFile.getNation().equals(arg2)) {
-                    return new jarCustomExtractor((URL)jarsNations.elementAt(i)).extractImage();
+                    return new jarCustomExtractor(jarsNations.get(i)).extractImage();
                 }
             }
         }

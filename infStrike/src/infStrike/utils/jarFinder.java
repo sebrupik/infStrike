@@ -5,8 +5,9 @@ import infStrike.objects.nationFile2;
 
 import java.io.File;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Vector;
+import java.util.ArrayList;
 import java.net.*;
 import javax.swing.*;
 
@@ -21,30 +22,30 @@ import javax.swing.*;
 public class jarFinder {
     private final String _CLASS;
     JProgressBar curPro;
-    Hashtable weaponTable;
+    HashMap<String, ArrayList> weaponTable;
    
     // Vectors containing specific classes.
-    Vector allWeapons;
-    Vector allNations;        
+    ArrayList<weapFile> allWeapons;
+    ArrayList<nationFile2> allNations;        
  
     // Vectors containg JAR URLs
-    Vector jarsWeapons;
-    Vector jarsNations;
+    ArrayList<URL> jarsWeapons;
+    ArrayList<URL> jarsNations;
 
     jarCustomExtractor jEx;
 
-    Vector tmpVec;
+    ArrayList<String[]> tmpVec;
     nationFile2 tmpNatFile;
     weapFile tmpWeapFile;
     String[] tmpStrAr;
     double proInc = 100/6; // 6 is the number of main methods in the constructor
     double tmpInt, value;
 
-    public jarFinder(JProgressBar curPro, Vector jarsWeapons, Vector jarsNations) {
+    public jarFinder(JProgressBar curPro, ArrayList<URL> jarsWeapons, ArrayList<URL> jarsNations) {
         this.curPro = curPro;
         this.jarsWeapons = jarsWeapons;
         this.jarsNations = jarsNations;
-        weaponTable = new Hashtable();
+        weaponTable = new HashMap<>();
         
         this._CLASS = this.getClass().getName();
 
@@ -69,19 +70,17 @@ public class jarFinder {
     */
     private void loadNationWeapons() {
         this.setText(_CLASS+"/loadNationWeapons - Loading weapon classes into nation files", 80.0);
-        Vector v;
+        ArrayList<String[]> v;
         String tmpStr;
         String[] str = new String[5];
-        Enumeration e1 = weaponTable.keys();
-        while (e1.hasMoreElements()) {
-            tmpStr = (String)e1.nextElement();
-            v = (Vector)weaponTable.get(tmpStr);
+        for(String s : weaponTable.keySet()) {
+            v = weaponTable.get(s);
             tmpInt = proInc/allNations.size();
             value = curPro.getValue();
             for (int i=0; i < allNations.size(); i++) {
-                tmpNatFile = (nationFile2)allNations.elementAt(i);
+                tmpNatFile = allNations.get(i);
                 value = curPro.getValue()+tmpInt;
-                if (tmpNatFile.getNation().equals(tmpStr)) {
+                if (tmpNatFile.getNation().equals(s)) {
                     this.setText("Loading weapons for "+tmpNatFile.getNation(), value);
                     tmpNatFile.loadWeaponInfo(v); 
                     tmpNatFile.loadWeaponClasses(findWeaponClasses(v));
@@ -94,18 +93,18 @@ public class jarFinder {
     * Given a vector of weapon info, a vector containing the 
     * corresponding weapon classes will be returned.
     */
-    private Vector findWeaponClasses(Vector v) {
+    private ArrayList findWeaponClasses(ArrayList<String[]> v) {
         System.out.println(_CLASS+"/findWeaponClasses - Initialising");
         String str;
-        Vector tmp = new Vector();
+        ArrayList<weapFile> tmp = new ArrayList<>();
         for (int i=0; i<v.size(); i++) {
-            str = ((String[])v.elementAt(i))[0]; // get the weapon name
+            str = v.get(i)[0]; // get the weapon name
             //System.out.println(str);
             for (int j=0; j<allWeapons.size(); j++) {
-                tmpWeapFile = (weapFile)allWeapons.elementAt(j);
+                tmpWeapFile = allWeapons.get(j);
                 //System.out.println("Weapon in the vector is "+tmpWeapFile.getName());
                 if (tmpWeapFile.getName().equals(str)) {
-                    tmp.addElement(tmpWeapFile);
+                    tmp.add(tmpWeapFile);
                 }
             }
         }
@@ -121,21 +120,21 @@ public class jarFinder {
         System.out.println(_CLASS+"/loadWeaponJars - initialising");
         this.setText("Begining Weapon JAR loading", 16.0);
         File root = new File("weapons");
-        jarsWeapons = new Vector();
+        jarsWeapons = new ArrayList<>();
         loadJars(root, jarsWeapons);
     }
     private void loadNationJars() {
         System.out.println(_CLASS+"/loadNationJars - initialising");
         this.setText("Begining Nation JAR loading", 0.0);
         File root = new File("nations");
-        jarsNations = new Vector();
+        jarsNations = new ArrayList<>();
         loadJars(root, jarsNations);
     }
 
     /**
     * Doesn't really load the JARs merely finds and stores their URLs
     */
-    private void loadJars(File arg1, Vector arg2) {
+    private void loadJars(File arg1, ArrayList<URL> arg2) {
         System.out.println(_CLASS+"/loadJars - initialising");
         if (arg1.exists()) {
             String[] files = arg1.list();
@@ -154,9 +153,9 @@ public class jarFinder {
                         try {
                             value += tmpInt;
                             System.out.println("tmpInt value "+tmpInt);
-                            if (checkJars(file.toURL())) {
+                            if (checkJars(file.toURI().toURL())) {
                                 this.setText("JAR file "+file+" is valid", value);
-                                arg2.addElement(file.toURL());
+                                arg2.add(file.toURI().toURL());
                             }
                             else {
                                 this.setText("JAR file "+file+" is NOT valid!", value);
@@ -178,12 +177,13 @@ public class jarFinder {
     private void loadWeapons() {
         System.out.println(_CLASS+"/loadWeapons - initialising");
         this.setText("Preparing to load weapon classes", 48.0);
-        URL[] urls = new URL[jarsWeapons.size()];
-        jarsWeapons.copyInto(urls);
+        //URL[] urls = new URL[jarsWeapons.size()];
+        //jarsWeapons.copyInto(urls);
+        URL[] urls = (URL[])jarsWeapons.toArray();
         for (int i=0; i<urls.length; i++) {
             System.out.println("in the urls variable : "+urls[i]);
         }
-        allWeapons = new Vector();
+        allWeapons = new ArrayList<>();
         new WeaponClassLoader(urls, allWeapons);
         System.out.println(_CLASS+"/loadWeapons - there are "+allWeapons.size()+" loaded");
     }
@@ -191,12 +191,14 @@ public class jarFinder {
     private void loadNations() {
         System.out.println(_CLASS+"/loadNations - initialising");
         this.setText("Preparing to load nation classes", 32.0);
-        URL[] urls = new URL[jarsNations.size()];
-        jarsNations.copyInto(urls);
+        //URL[] urls = new URL[jarsNations.size()];
+        //jarsNations.copyInto(urls);
+        URL[] urls = (URL[])jarsNations.toArray();
+        
         for (int i=0; i<urls.length; i++) {
             System.out.println("in the urls variable : "+urls[i]);
         }
-        allNations = new Vector();
+        allNations = new ArrayList<>();
         new NationClassLoader(urls, allNations);
         System.out.println(_CLASS+"/loadNations - there are "+allNations.size()+" loaded");
     }
@@ -211,8 +213,10 @@ public class jarFinder {
     private void sortWeapons() {
         System.out.println(_CLASS+"/sortWeapons - initialising xxxxxxxxx");
         this.setText("Sorting weapons.", 64.0);
-        URL[] urls = new URL[jarsWeapons.size()];
-        jarsWeapons.copyInto(urls);
+        //URL[] urls = new URL[jarsWeapons.size()];
+        //jarsWeapons.copyInto(urls);
+        
+        URL[] urls = (URL[])jarsWeapons.toArray();
         String[] str1, str2;
         for (int i=0; i<urls.length; i++) {
             jEx = new jarCustomExtractor(urls[i]);
@@ -221,12 +225,12 @@ public class jarFinder {
  
             for (int j=0; j<str2.length; j++) {
                 if(weaponTable.containsKey(str2[j].trim())) {
-                    tmpVec = (Vector)weaponTable.get(str2[j].trim());
-                    tmpVec.addElement(new String[]{str1[0], str1[1], str1[2], str1[3], str1[4], str1[5]});
+                    tmpVec = weaponTable.get(str2[j].trim());
+                    tmpVec.add(new String[]{str1[0], str1[1], str1[2], str1[3], str1[4], str1[5]});
                 }
                 else {
-                    tmpVec = new Vector();
-                    tmpVec.addElement(new String[]{str1[0], str1[1], str1[2], str1[3], str1[4], str1[5]});
+                    tmpVec = new ArrayList();
+                    tmpVec.add(new String[]{str1[0], str1[1], str1[2], str1[3], str1[4], str1[5]});
                     weaponTable.put(str2[j].trim(), tmpVec);
                 }
             }
@@ -244,23 +248,20 @@ public class jarFinder {
     }
 
     public void printWeaponTable() {
-        Vector v;
-        String tmpStr;
-        String[] str = new String[5];
-        Enumeration e1 = weaponTable.keys();
-        while (e1.hasMoreElements()) {
-             tmpStr = (String)e1.nextElement();
-             v = (Vector)weaponTable.get(tmpStr);
-             System.out.println("<"+tmpStr+">");
+        ArrayList<String[]> v;
+        String[] str;
+        for(String k : weaponTable.keySet()) {    
+             v = weaponTable.get(k);
+             System.out.println("<"+k+">");
              for (int i=0; i < v.size(); i++) {
-                 str = (String[])v.elementAt(i);
+                 str = v.get(i);
                  System.out.println(str[0]+", "+str[1]+", "+str[2]+", "+str[3]+", "+str[4]);
              }
         }
     }
 
-    public Vector[] getVectors() {
-        return new Vector[]{allWeapons, allNations, jarsWeapons, jarsNations};
+    public ArrayList[] getVectors() {
+        return new ArrayList[]{allWeapons, allNations, jarsWeapons, jarsNations};
     }
 
     private void setText(String arg1, double arg2) {

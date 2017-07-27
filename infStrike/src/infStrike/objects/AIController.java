@@ -1,13 +1,10 @@
 package infStrike.objects;
 
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.awt.Graphics2D;
 
-public class AIController {
-    private int side;    
-    //private Blackboard bb;
+public abstract class AIController {
+    private int side;
     private worldObject world;
 
     private int view;
@@ -23,18 +20,11 @@ public class AIController {
         this.side = side;
         this.world = world;
     }
-    public void action(double time) { }
-
-    public void updateGraphics(double time, Graphics2D g2, boolean AIDraw) {
-        //super.updateGraphics(time, g2);
-    }
-
-    /**
-    * 
-    */
-    public void receiveRequest(AIRequest arg1) {  }
-    public void addSpecificMission(AIPlatoon platoon, AIMission mission) { }
-
+    
+    public abstract void action(double time);
+    public abstract void updateGraphics(double time, Graphics2D g2, boolean AIDraw);
+    public abstract void addSpecificMission(AIPlatoon platoon, AIMission mission);
+    public abstract void receiveRequest(AIRequest arg1);
 
     public void setVars(int view, int vArc, int platSize, int numBase, boolean picWeap, boolean advWeap, boolean platoon, boolean advPath) {
         this.view =  view;
@@ -53,14 +43,14 @@ public class AIController {
         Base base1;    
  
         for (int i=0; i<world.bases[side].size(); i++) {
-            base1 = (Base)world.bases[side].elementAt(i);
+            base1 = (Base)world.bases[side].get(i);
             if (java.awt.geom.Point2D.distance(d[0], d[1], base1.getCor().x, base1.getCor().y) < distance) {
                 distance = java.awt.geom.Point2D.distance(d[0], d[1], base1.getCor().x, base1.getCor().y);
                 index = i;
             }
         }
         if (index != -1) 
-            return (Base)world.bases[side].elementAt(index);
+            return (Base)world.bases[side].get(index);
         else 
             return null;
     }
@@ -71,25 +61,25 @@ public class AIController {
 
     /**
         Checks platoons missions to see which base they are affiliated with. Base with least one or no
-        affiliated platoons will recieve transfer mission from base if its capacity is exceeded.
+        affiliated platoons will receive transfer mission from base if its capacity is exceeded.
     */
     public Base needTransfer() {
-        Vector v = (Vector)world.bases[side]; 
+        ArrayList<Base> v = (ArrayList)world.bases[side]; 
         
         Base base = null;
         //base = (Base)v.elementAt(0);
  
         for (int i=0; i<v.size(); i++) {
             if( base==null ) 
-                base = (Base)v.elementAt(i);
+                base = v.get(i);
             
-            if ( ((Base)v.elementAt(i)).calcMembers() < base.calcMembers() ) 
-                base = (Base)v.elementAt(i);
+            if ( v.get(i).calcMembers() < base.calcMembers() ) 
+                base = v.get(i);
         }
         return base;
     }
 
 
-    public int getSide() {  return side; }
+    public int getSide() { return side; }
     public worldObject getWorldObject() { return world; }
 }

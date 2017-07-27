@@ -1,17 +1,19 @@
 package infStrike.utils;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.awt.*;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.*;
 import java.awt.geom.Line2D.Double;
 import java.util.*;
+import java.util.HashMap;
 
 public class topoMerger {
     private int pointsX, pointsY, gridSize;
     private int[][] topoValues;
-    private Vector tmpVec, topoVec, topoColourVec;
+    private ArrayList<Polygon> tmpPolyAl;
+    private ArrayList topoVec, topoColourVec;
     private Polygon tmpPoly1, tmpPoly2;
     private Rectangle tmpRect;
     private String tmpStr;
@@ -21,7 +23,7 @@ public class topoMerger {
     * NB. when adding graphical items to topoVec, be aware that any type can be used.
     * Just remember to change a few lines in the draw method of 'topoObj'.
     */
-    public topoMerger(int arg1, int arg2, int arg3, int[][] arg4, Vector arg5, Vector arg6) {
+    public topoMerger(int arg1, int arg2, int arg3, int[][] arg4, ArrayList arg5, ArrayList arg6) {
         pointsX = arg1;
         pointsY = arg2;
         gridSize = arg3;
@@ -37,7 +39,7 @@ public class topoMerger {
     * This method will make or break the topology ideal!
     */ 
     public void topomerge() {
-        Hashtable topoHash = new Hashtable();
+        HashMap<String, ArrayList> topoHash = new HashMap<>();
 
         int tmpX = 0;
         int tmpY = 0;
@@ -46,13 +48,13 @@ public class topoMerger {
                 tmpX = gridSize*j;
 
                 if(topoHash.containsKey(Integer.toString(topoValues[j][i]))) {
-                    tmpVec = (Vector)topoHash.get(Integer.toString(topoValues[j][i]));
-                    tmpVec.addElement(new Polygon(new int[]{tmpX, (tmpX+gridSize), (tmpX+gridSize), tmpX}, new int[]{tmpY, tmpY, (tmpY+gridSize), (tmpY+gridSize)},4));
+                    tmpPolyAl = topoHash.get(Integer.toString(topoValues[j][i]));
+                    tmpPolyAl.add(new Polygon(new int[]{tmpX, (tmpX+gridSize), (tmpX+gridSize), tmpX}, new int[]{tmpY, tmpY, (tmpY+gridSize), (tmpY+gridSize)},4));
                 }
                 else {
-                    tmpVec = new Vector();
-                    tmpVec.addElement(new Polygon(new int[]{tmpX, (tmpX+gridSize), (tmpX+gridSize), tmpX}, new int[]{tmpY, tmpY, (tmpY+gridSize), (tmpY+gridSize)},4));
-                    topoHash.put(Integer.toString(topoValues[j][i]), tmpVec);
+                    tmpPolyAl = new ArrayList();
+                    tmpPolyAl.add(new Polygon(new int[]{tmpX, (tmpX+gridSize), (tmpX+gridSize), tmpX}, new int[]{tmpY, tmpY, (tmpY+gridSize), (tmpY+gridSize)},4));
+                    topoHash.put(Integer.toString(topoValues[j][i]), tmpPolyAl);
                 }
             } 
             tmpX = 0;
@@ -60,12 +62,13 @@ public class topoMerger {
         }
 
         System.out.println("Give me all the fucking poly points! Mo-FO!");
-        Enumeration e2 = topoHash.keys();
-        while (e2.hasMoreElements()) {
-            tmpStr = (String)e2.nextElement();
-            tmpVec = (Vector)topoHash.get(tmpStr);
-            for(int j=0; j<tmpVec.size(); j++) {
-                tmpPoly1 = (Polygon)tmpVec.elementAt(j);
+        //Enumeration e2 = topoHash.keys();
+        //while (e2.hasMoreElements()) {
+        for(String s : topoHash.keySet()) {
+            //tmpStr = (String)e2.nextElement();
+            tmpPolyAl = topoHash.get(s);
+            for(int j=0; j<tmpPolyAl.size(); j++) {
+                tmpPoly1 = tmpPolyAl.get(j);
                 System.out.println("("+tmpPoly1.xpoints[0]+","+tmpPoly1.ypoints[0]+")("+tmpPoly1.xpoints[1]+","+tmpPoly1.ypoints[1]+")("+
                                        tmpPoly1.xpoints[2]+","+tmpPoly1.ypoints[2]+")("+tmpPoly1.xpoints[3]+","+tmpPoly1.ypoints[3]+")");
             }
@@ -80,22 +83,24 @@ public class topoMerger {
         //bigSmasher(topoHash);
     }
    
-    private void littleSmasher(Hashtable topoHash) { 
-        Vector v;      
+    private void littleSmasher(HashMap<String, ArrayList> topoHash) { 
+        ArrayList<Polygon> v;      
         String str;
 
-        for (Enumeration e = topoHash.keys(); e.hasMoreElements();) {
-            str = (String)e.nextElement();
-            v = (Vector)topoHash.get(str);
+        //for (Enumeration e = topoHash.keys(); e.hasMoreElements();) {
+        for(String s : topoHash.keySet()) {
+            //str = (String)e.nextElement();
+            v = topoHash.get(s);
             for (int i=0; i<v.size(); i++) {
-                topoVec.addElement((Polygon)v.elementAt(i));
-                topoColourVec.addElement(str);
+                topoVec.add(v.get(i));
+                topoColourVec.add(s);
             }
         }
     }
 
-    private void bigSmasher(Hashtable topoHash) {
-        Vector v, indexes;      
+    private void bigSmasher(Hashtable<String, ArrayList> topoHash) {
+        ArrayList v;
+        ArrayList indexes;      
         String str;
         Polygon poly1, poly2;
         int[] sharedLine;
@@ -103,7 +108,7 @@ public class topoMerger {
 
         for (Enumeration e = topoHash.keys(); e.hasMoreElements();) {
             str = (String)e.nextElement();
-            v = (Vector)topoHash.get(str);
+            v = topoHash.get(str);
             indexes = new Vector();
             //for (int i=0; i<v.size(); i++) {
             for(Iterator it = (Iterator)v.elements(); it.hasNext();) {
@@ -111,7 +116,7 @@ public class topoMerger {
 
 
                 for(int j=0; j<v.size(); j++) {
-                    poly2 = (Polygon)tmpVec.elementAt(j);
+                    poly2 = tmpPolyAl.get(j);
                     if(poly1 != poly2) {
                         //System.out.println("diff poly found!");
                         sharedLine = checkPolysEdgeShare(poly1, poly2);
@@ -129,8 +134,8 @@ public class topoMerger {
                 }
                 v.removeAll(indexes);
 
-                topoVec.addElement(poly1);
-                topoColourVec.addElement(str);
+                topoVec.add(poly1);
+                topoColourVec.add(str);
             }
         }
     }
@@ -143,18 +148,18 @@ public class topoMerger {
     * of elements/polygons that have been added. A polygon would then be checked that it is not a memeber
     * of this list before being added. This means the tmpVec need never be messed with.
     */ 
-    private void bigSmasherOld(Hashtable topoHash) {
+    private void bigSmasherOld(Hashtable<String, ArrayList> topoHash) {
         int[] sharedLine;   
         for (Enumeration e = topoHash.keys(); e.hasMoreElements();) {
             tmpStr = (String)e.nextElement();
-            tmpVec = (Vector)topoHash.get(tmpStr);
+            tmpPolyAl = topoHash.get(tmpStr);
             //System.out.println("----------------------------------------------------");
             //System.out.println("--------Merging polys with height "+tmpStr+"--------");
             //System.out.println("----------------------------------------------------");
 
-            for(int j=0; j<tmpVec.size(); j++) {
-                System.out.println("There are "+tmpVec.size()+" polygons of size "+tmpStr);
-                tmpPoly1 = (Polygon)tmpVec.elementAt(j);
+            for(int j=0; j<tmpPolyAl.size(); j++) {
+                System.out.println("There are "+tmpPolyAl.size()+" polygons of size "+tmpStr);
+                tmpPoly1 = tmpPolyAl.get(j);
 
                 //System.out.println("Got a new primary poly*****************");
                 /*for(int k=0; k<tmpVec.size(); k++) {
@@ -173,15 +178,15 @@ public class topoMerger {
                     //else 
                     //    System.out.println("same poly found");
                 }*/
-                topoVec.addElement(tmpPoly1);
+                topoVec.add(tmpPoly1);
                 System.out.println("A polygon has been added");
                 //System.out.println("removing poly with top point "+tmpPoly1.xpoints[0]+", "+tmpPoly1.ypoints[0]);
-                tmpVec.remove(tmpPoly1);
+                tmpPolyAl.remove(tmpPoly1);
                 
-                topoColourVec.addElement(tmpStr);
+                topoColourVec.add(tmpStr);
             }
         }
-        tmpVec = null;
+        tmpPolyAl = null;
         tmpPoly1 = null;
         tmpPoly2 = null;
         tmpRect = null;

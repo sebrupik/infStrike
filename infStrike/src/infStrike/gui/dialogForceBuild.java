@@ -62,11 +62,11 @@ class unitSetup extends JPanel {
     private JComboBox editTypeBox;   
     private JTextField nameTypeTXT;
     private JComboBox rankTypeBox;
-    private JComboBox weapTypeBox;
-    private JComboBox cammTypeBox;
-    private JComboBox armrTypeBox;
-    private JComboBox priWTypeBox;
-    private JComboBox secWTypeBox;
+    private JComboBox<String> weapTypeBox;
+    private JComboBox<String>cammTypeBox;
+    private JComboBox<String> armrTypeBox;
+    private JComboBox<String> priWTypeBox;
+    private JComboBox<String> secWTypeBox;
 
     private JComboBox[] ammTypeBox = new JComboBox[8];
 
@@ -102,18 +102,18 @@ class unitSetup extends JPanel {
         for (int i=0; i<ammTypeLbl.length; i++) 
             ammTypeLbl[i] = new JLabel("Ammo "+(i+1)+" type");
 
-        rankTypeBox = new JComboBox(natFile.getRanks());
-        weapTypeBox = new JComboBox(natFile.getWeaponUser());
-        cammTypeBox = new JComboBox(natFile.getCammo());
-        armrTypeBox = new JComboBox(natFile.getArmour());
+        rankTypeBox = new JComboBox<String>(natFile.getRanks());
+        weapTypeBox = new JComboBox<String>(natFile.getWeaponUser());
+        cammTypeBox = new JComboBox<String>(natFile.getCammo());
+        armrTypeBox = new JComboBox<String>(natFile.getArmour());
         editTypeBox = new JComboBox();
 
         addUnit = new JButton("Add"); 
 
         sideTypeImg = new JLabel(arg5);      
         nameTypeTXT = new JTextField(natFile.makeName(unitAl));
-        priWTypeBox = new JComboBox(natFile.getWeapPri());
-        secWTypeBox = new JComboBox(natFile.getWeapSec());
+        priWTypeBox = new JComboBox<String>(natFile.getWeapPri());
+        secWTypeBox = new JComboBox<String>(natFile.getWeapSec());
          
         howManyTXT = new JTextField("1");
 
@@ -261,26 +261,26 @@ class unitSetup extends JPanel {
                 } catch (NumberFormatException err) { System.out.println(err); }
 
                 
-                System.out.println("the size of unitVec to start with for side "+side+" is : "+unitVec.size());
+                System.out.println("the size of unitVec to start with for side "+side+" is : "+unitAl.size());
                 for (int i=0; i<iterations; i++) {
-                unitVec.addElement(new basicUnitInfo(side,
-                                                     nation,
-                                                     nameTypeTXT.getText().trim(),
-                                                     natFile.getRankValues()[rankTypeBox.getSelectedIndex()],
-                                                     natFile.getCammoValues()[cammTypeBox.getSelectedIndex()],
-                                                     natFile.getArmourValues()[armrTypeBox.getSelectedIndex()],
-                                                     natFile.weapLoadout(
-                                                     (String)priWTypeBox.getItemAt(priWTypeBox.getSelectedIndex()),
-                                                     (String)secWTypeBox.getItemAt(secWTypeBox.getSelectedIndex()),
-                                                     (String)ammTypeBox[0].getItemAt(ammTypeBox[0].getSelectedIndex()),
-                                                     (String)ammTypeBox[1].getItemAt(ammTypeBox[1].getSelectedIndex()),
-                                                     (String)ammTypeBox[2].getItemAt(ammTypeBox[2].getSelectedIndex()),
-                                                     (String)ammTypeBox[3].getItemAt(ammTypeBox[3].getSelectedIndex()),
-                                                     (String)ammTypeBox[4].getItemAt(ammTypeBox[4].getSelectedIndex()),
-                                                     (String)ammTypeBox[5].getItemAt(ammTypeBox[5].getSelectedIndex()),
-                                                     (String)ammTypeBox[6].getItemAt(ammTypeBox[6].getSelectedIndex()),
-                                                     (String)ammTypeBox[7].getItemAt(ammTypeBox[7].getSelectedIndex()) ) ));
-                nameTypeTXT.setText(natFile.makeName(unitVec));
+                unitAl.add(new basicUnitInfo(side,
+                                             nation,
+                                             nameTypeTXT.getText().trim(),
+                                             natFile.getRankValues()[rankTypeBox.getSelectedIndex()],
+                                             natFile.getCammoValues()[cammTypeBox.getSelectedIndex()],
+                                             natFile.getArmourValues()[armrTypeBox.getSelectedIndex()],
+                                             natFile.weapLoadout(
+                                             (String)priWTypeBox.getItemAt(priWTypeBox.getSelectedIndex()),
+                                             (String)secWTypeBox.getItemAt(secWTypeBox.getSelectedIndex()),
+                                             (String)ammTypeBox[0].getItemAt(ammTypeBox[0].getSelectedIndex()),
+                                             (String)ammTypeBox[1].getItemAt(ammTypeBox[1].getSelectedIndex()),
+                                             (String)ammTypeBox[2].getItemAt(ammTypeBox[2].getSelectedIndex()),
+                                             (String)ammTypeBox[3].getItemAt(ammTypeBox[3].getSelectedIndex()),
+                                             (String)ammTypeBox[4].getItemAt(ammTypeBox[4].getSelectedIndex()),
+                                             (String)ammTypeBox[5].getItemAt(ammTypeBox[5].getSelectedIndex()),
+                                             (String)ammTypeBox[6].getItemAt(ammTypeBox[6].getSelectedIndex()),
+                                             (String)ammTypeBox[7].getItemAt(ammTypeBox[7].getSelectedIndex()) ) ));
+                nameTypeTXT.setText(natFile.makeName(unitAl));
                 }
             }
         });

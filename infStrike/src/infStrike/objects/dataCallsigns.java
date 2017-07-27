@@ -10,7 +10,7 @@ public class dataCallsigns {
         this.side = side;
     }
 
-    public String makeCallsign(ArrayList al) {
+    public String makeCallsign(ArrayList<AIPlatoon> al) {
         String tmp = null;
         do {
             tmp = callsign[(int)(Math.random()*callsign.length)];

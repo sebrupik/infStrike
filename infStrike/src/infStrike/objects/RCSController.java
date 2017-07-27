@@ -39,7 +39,7 @@ public class RCSController extends AIController{
     private ArrayList platoonRequests;
     private HashMap<String, ArrayList> platoonRequestsHT;
     private ArrayList tempAL;
-    private ArrayList intelligence;
+    private ArrayList<AIIntelligence> intelligence;
 
     private final String type_FRONT = "FRONT";
     private final String type_FLANK = "FLANK";
@@ -69,9 +69,9 @@ public class RCSController extends AIController{
         this.IM = new RCSInfluenceMap(world.getWidth(), world.getHeight(), world.getArenaPlan().getGridsize(), type_FRONT, type_FLANK, type_REAR, type_UNKNOWN);
         this.PF = new RCSPathfinder(world);
 
-        this.platoonRequests = new ArrayList();
-        this.platoonRequestsHT = new HashMap();
-        this.intelligence = new ArrayList();
+        this.platoonRequests = new ArrayList<>();
+        this.platoonRequestsHT = new HashMap<>();
+        this.intelligence = new ArrayList<>();
 
         this.AIMP = new AIMissionPriority(new String[]{mission_MISSION, mission_WAIT_AT_BASE, mission_ATTACK, mission_ATTACK_LOCATION, 
                                           mission_DEFEND, mission_DEFEND_PATROL, mission_SUPPORT, mission_FIRE_SUPPORT, 
@@ -157,6 +157,7 @@ public class RCSController extends AIController{
             if (pos1.getTargets().size() > 0) {
                 if (((objectTarget)pos1.getTargets().get(0)).attack_value > filter ) { 
                     pos2 = ((objectTarget)pos1.getTargets().get(0)).target;
+                    
                     bb.addPlatoonSpecificMission(pos1.availableForMission(new AIMissionOTHER(mission_ATTACK_LOCATION, "Special Attack", new java.awt.geom.Point2D.Double(pos2.getCenter()[0], pos2.getCenter()[1]), super.getNearestBase(pos2.getCenter()))));
                 }
             }
@@ -289,9 +290,7 @@ public class RCSController extends AIController{
     * how do I come up with these numbers?!
     */
     private void processMissionRequests(HashMap<String, ArrayList> hm) {
-        String tmpStr; 
-
-        //for (Enumeration e = hm.keys() ; e.hasMoreElements() ;) {
+        //String tmpStr; 
         for(String e : hm.keySet()) {
              //tmpStr = e.get();
              bb.getMissions(hm.get(e), AIMP, e);  //pass the arraylist and base name

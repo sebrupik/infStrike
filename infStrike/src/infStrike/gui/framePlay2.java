@@ -68,7 +68,11 @@ public class framePlay2 extends JFrame {
         varsGoVal.setForeground(Color.red);
         arenaGoVal.setForeground(Color.red);
         startBut.setEnabled(false);
-
+        
+        genPanel();
+    }
+    
+    private void genPanel() {
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();  
         mainPanel.setLayout(gridbag);
@@ -217,7 +221,7 @@ public class framePlay2 extends JFrame {
 
                     //the new suposedly faster AWT interface
                     renderer2 = new frameArenaRenderer2(test);
-                    renderer2.show();
+                    renderer2.setVisible(true);
                     
                     //JFrame wireframe = new frameWireframeRenderer(test);
                     //wireframe.show();

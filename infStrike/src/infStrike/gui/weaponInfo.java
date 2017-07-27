@@ -9,7 +9,7 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 
 public class weaponInfo extends JPanel {
-    private JComboBox weaponSelect;
+    private JComboBox<String> weaponSelect;
     private JLabel weapPic = new JLabel();
     private JTextArea textArea = new JTextArea();
     private JScrollPane scrollPane;

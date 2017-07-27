@@ -51,7 +51,7 @@ public class Base {
         callsigns = new dataCallsigns(side);
 
         
-        platoons = new ArrayList();
+        platoons = new ArrayList<>();
         //barrackLocations = new Point2D.Double[10];
         //barrackOccupiers = new String[10];
         barrackLocations = new barrackLocation[10];

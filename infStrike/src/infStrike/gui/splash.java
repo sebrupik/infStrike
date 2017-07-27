@@ -6,9 +6,9 @@ import infStrike.objects.nationDatabase2;
 import java.awt.*;
 
 import java.awt.event.*;
-import java.applet.*; 
-import java.util.Vector;
+import java.util.ArrayList;
 import javax.swing.*;
+import java.net.URL;
 
 public class splash extends JFrame {
     Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -29,10 +29,10 @@ public class splash extends JFrame {
         window.getContentPane().add(label, BorderLayout.CENTER);
         window.getContentPane().add(curPro, BorderLayout.SOUTH);
         centerWindow();
-        window.show();   
+        window.setVisible(true);
 
         
-        natB = new nationDatabase2( new jarFinder( curPro, new Vector(), new Vector() ).getVectors() );  
+        natB = new nationDatabase2( new jarFinder( curPro, new ArrayList<URL>(), new ArrayList<URL>() ).getVectors() );  
         window.addMouseListener(new MouseAdapter() {
             @Override public void mousePressed(MouseEvent e) {
                 window.dispose();

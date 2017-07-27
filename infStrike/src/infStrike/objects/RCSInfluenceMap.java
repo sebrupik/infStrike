@@ -32,8 +32,8 @@ public class RCSInfluenceMap {
         this.type_UNKNOWN = type_UNKNOWN;
 
 
-        this.friendlyPositions = new ArrayList();
-        this.enemyPositions = new ArrayList();
+        this.friendlyPositions = new ArrayList<>();
+        this.enemyPositions = new ArrayList<>();
     }
 
     public void updateGraphics(double time, Graphics2D g2) {
@@ -54,7 +54,7 @@ public class RCSInfluenceMap {
     * fVec is a vector containing AIPlatoon objects for the friendly side
     * eIntel is a vector containing AIIntelligence objects
     */
-    public void refreshInfluence(ArrayList fVec, ArrayList eIntel) {
+    public void refreshInfluence(ArrayList<AIPlatoon> fVec, ArrayList<AIIntelligence> eIntel) {
         calculateInfluence(fVec, eIntel);
     }
 
@@ -82,7 +82,7 @@ public class RCSInfluenceMap {
     * Itterates through a vector of platoons and extracts the relevant influence based information
     * and passes it to the method applyValue.
     */
-    public void calculateInfluence(ArrayList<AIPlatoon> platoons, ArrayList eIntel) {
+    public void calculateInfluence(ArrayList<AIPlatoon> platoons, ArrayList<AIIntelligence> eIntel) {
         this.grid = new double[grid.length][grid[0].length];
         this.friendlyPositions.clear();
         this.enemyPositions.clear();
@@ -105,7 +105,7 @@ public class RCSInfluenceMap {
         }
 
         for (int i=0; i<eIntel.size(); i++) {
-            aii = (AIIntelligence)eIntel.get(i);
+            aii = eIntel.get(i);
             platoonValue = (int)aii.getValue();
             //platoonDropOff = aii.getPlatoonDropOff();
             platoonX = aii.getWhere().x;
@@ -191,8 +191,8 @@ public class RCSInfluenceMap {
     * Vector v contains unsorted platoon clusters 
     * Vector tVec contains sorted and assigned positions
     */
-    private void calculateFF(ArrayList v) {
-        ArrayList tVec = new ArrayList();
+    private void calculateFF(ArrayList<RCSInfluenceMapPosition> v) {
+        ArrayList<double[]> tVec = new ArrayList<>();
         orderClusterValues(v, tVec);
         calculateFrontsAndFlanks(v, tVec);
     }
@@ -203,7 +203,7 @@ public class RCSInfluenceMap {
     * the first element of which is the pos totalinfluence value
     * the second element the position of pos in the vector v
     */
-    private void orderClusterValues(ArrayList<RCSInfluenceMapPosition> x1, ArrayList x2) {
+    private void orderClusterValues(ArrayList<RCSInfluenceMapPosition> x1, ArrayList<double[]> x2) {
         RCSInfluenceMapPosition pos;
 
         for (int i=0; i<x1.size(); i++) {
@@ -305,5 +305,5 @@ public class RCSInfluenceMap {
         }
     }
 
-    public ArrayList getFriendlyPositions() { return friendlyPositions; }
+    public ArrayList<RCSInfluenceMapPosition> getFriendlyPositions() { return friendlyPositions; }
 }

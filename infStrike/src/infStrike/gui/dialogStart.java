@@ -88,7 +88,7 @@ public class dialogStart extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 JFrame pFrame = new framePlay2(natDatabase);
                 pFrame.setResizable(false);
-                pFrame.show();
+                pFrame.setVisible(true);
                 window.dispose();
             }
         });
@@ -96,7 +96,7 @@ public class dialogStart extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 JFrame sFrame = new frameSetup2(natDatabase);
                 //sFrame.setResizable(false);
-                sFrame.show();
+                sFrame.setVisible(true);
                 window.dispose();
             }
         });
@@ -114,7 +114,7 @@ public class dialogStart extends JFrame {
         });
 
         centerWindow();
-        window.show();
+        window.setVisible(true);
     }
     void buildConstraints(GridBagConstraints gbc, int gx, int gy, int gw, int gh, int wx, int wy) {
         gbc.gridx = gx;

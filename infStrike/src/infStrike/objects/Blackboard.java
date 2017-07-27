@@ -1,27 +1,34 @@
 package infStrike.objects;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.awt.geom.Point2D;
 
 /**
-* Esentialy a class to manage entries to a hashtable
+* Essentialy a class to manage entries to a hashmap
 * The entries will contain Vectors of particular types (defence, attack)
 * and is open ended, so anything can be added, it is just a matter of 
 * understanding it.
 *
 * It should in theory keep a log of every mission issued (interesting?!)
+* 
+* Update -- Each @see infstrike.objects.Base Base object has a an ArrayList of
+* of @see infstrike.objects.AIMission AIMission objects associated with it. This 
+* data structure is held in a HashMap. The @see infstrike.objects.Blackboard 
+* Blackboard object holds a HashMap containing these per-Base HashMaps. 
 */
 
 public class Blackboard {
-    private Hashtable openMissions;  //new mission not taken
-    private Vector activeMissions;   //mission currently being executed
+    private HashMap<String, HashMap<String, ArrayList>> openMissions;  //new mission not taken
+    private ArrayList activeMissions;   //mission currently being executed
     private int side;
 
-    private Hashtable ht;  //temp hashtable
+    private HashMap<String, ArrayList> ht;  //temp hashtable
 
     public Blackboard(int arg1) {
         this.side = arg1;
-        openMissions =  new Hashtable();
+        openMissions =  new HashMap<>();
     }
 
     /**
@@ -32,7 +39,7 @@ public class Blackboard {
     public int OMContains(String missionType, String baseName) {
         //System.out.println("Blackboard/OMContains - does "+baseName+" contain missions of type : "+missionType);
         int num;
-        ht = (Hashtable)openMissions.get(baseName);
+        ht = openMissions.get(baseName);
         if (ht != null) {
             //System.out.println(ht.containsKey(missionType));
             if(((ArrayList)ht.get(missionType)) == null)
@@ -46,10 +53,13 @@ public class Blackboard {
         return 0;
     }
 
-    public ArrayList OMGet(String arg1) { return (ArrayList)openMissions.get(arg1); }
+    public ArrayList OMGet(String missionType, String baseName) {
+        HashMap<String, ArrayList> tmpH = openMissions.get(baseName);
+        return tmpH.get(missionType);
+    }
 
     public AIMission OMGetMission(String missionType, String baseName) {
-        ht = (Hashtable)openMissions.get(baseName);
+        ht = openMissions.get(baseName);
         if (ht != null) {
             ArrayList a = (ArrayList)ht.get(missionType);
             if (a != null && a.size() > 0) {
@@ -66,36 +76,37 @@ public class Blackboard {
     * hashtable now contains base specific hashtables which contain the missions
     */
     public void OMPut(AIMission mission) {
-        ArrayList aL;
-        Hashtable h;
+        ArrayList<AIMission> aL;
+        HashMap<String, ArrayList> h;
         
         if (openMissions.containsKey(mission.getBase().getName())) {  //has the base got its own hashtable?
             System.out.println("Blackboard/OMPut - hashtable available for "+mission.getBase().getName());
-            h = (Hashtable)openMissions.get(mission.getBase().getName());
+            h = openMissions.get(mission.getBase().getName());
             HTPut(h, mission);
         }
         else {  // no it has not
             System.out.println("Blackboard/OMPut - no slot available for mission of type "+mission.getType());
-            h = new Hashtable();
-            aL = new ArrayList();
+            h = new HashMap<>();
+            aL = new ArrayList<>();
             aL.add(mission);
             h.put(mission.getType(), aL);
             openMissions.put(mission.getBase().getName(), h);
         }
 
         System.out.println("********************* print all keys for h");
-        for (Enumeration e = h.keys() ; e.hasMoreElements() ;) {
-             System.out.println((String)e.nextElement());  
+        //for (Enumeration e = h.keys() ; e.hasMoreElements() ;) {
+        for(String s : h.keySet()) {
+             System.out.println(s);  
         }
 
         System.out.println("********************* print all keys for openMissions");
-        for (Enumeration e = openMissions.keys() ; e.hasMoreElements() ;) {
-             System.out.println((String)e.nextElement());  
+        for(String s : openMissions.keySet()) {
+             System.out.println(s);  
         }
     }
 
-    private void HTPut(Hashtable ht, AIMission mission) {
-        ArrayList aL;
+    private void HTPut(HashMap<String, ArrayList> ht, AIMission mission) {
+        ArrayList<AIMission> aL;
 
         if (ht.containsKey(mission.getType())) {
             aL = (ArrayList) ht.get(mission.getType());
@@ -113,16 +124,19 @@ public class Blackboard {
     */
     public void addPlatoonSpecificMission(BlackboardPlatoonSpecificMission BPSMission) {
         System.out.println("Blackboard/addPlatoonSpecificMission - specific mission being added for "+BPSMission.ID);
-        ArrayList aL;
+        ArrayList<BlackboardPlatoonSpecificMission> aL;
 
+        ht = openMissions.get(BPSMission.mission.getBase().getName());
+        
         if (openMissions.containsKey("platoonSpecific")) {
-            aL = (ArrayList) openMissions.get("platoonSpecific");
+            aL = ht.get("platoonSpecific");
             aL.add(BPSMission);
         }
         else {   //create new mission slot
-            aL = new ArrayList();
+            aL = new ArrayList<>();
             aL.add(BPSMission);
-            openMissions.put("platoonSpecific", aL);
+            ht.put("platoonSpecific", aL);
+            openMissions.put(BPSMission.mission.getBase().getName(), ht);
         }
     }
 
@@ -132,9 +146,9 @@ public class Blackboard {
         }
     }
 
-    public AIMission getPlatoonSpecificMission(String ID) {
+    public AIMission getPlatoonSpecificMission(String ID, String baseName) {
         //System.out.println("Blackboard/getPlatoonSpecificMission - processing request for "+ID);
-        ArrayList aL = this.OMGet("platoonSpecific");
+        ArrayList aL = this.OMGet("platoonSpecific", baseName);
         int index = -1;
         if (aL != null) {
             for (int i=0; i<aL.size(); i++) {
@@ -153,12 +167,15 @@ public class Blackboard {
     */
     public void removePlatoonSpecificMission(String missionType, Point2D.Double location) {
         BlackboardPlatoonSpecificMission BPSM;
-        ArrayList aL = this.OMGet("platoonSpecific");
         
-        for (Iterator e = aL.iterator() ; e.hasNext() ;) {
-            BPSM = (BlackboardPlatoonSpecificMission)e.next();
-            if (BPSM.mission.getType().equals(missionType) & BPSM.mission.getFinalWaypoint().equals(location))
-                e.remove();
+        for(String baseName : openMissions.keySet()) {
+            ArrayList aL = this.OMGet("platoonSpecific", baseName);
+
+            for (Iterator e = aL.iterator() ; e.hasNext() ;) {
+                BPSM = (BlackboardPlatoonSpecificMission)e.next();
+                if (BPSM.mission.getType().equals(missionType) & BPSM.mission.getFinalWaypoint().equals(location))
+                    e.remove();
+            }
         }
     }
 
@@ -176,7 +193,7 @@ public class Blackboard {
         for (Iterator e = a.iterator() ; e.hasNext() ;) {
             AIP = (AIPlatoon)e.next();
             mission = null;
-            mission = this.getPlatoonSpecificMission(AIP.getID());
+            mission = this.getPlatoonSpecificMission(AIP.getID(), baseName);
 
             if(mission == null & aL.size() > 0) {   // no specific mission waiting
                 mission = tryToGetMission(aL, baseName);
@@ -190,7 +207,7 @@ public class Blackboard {
     }
  
     /**
-    * Goes through a list of misison types (aL) asking the base (baseName)
+    * Goes through a list of mission types (aL) asking the base (baseName)
     * for that type of mission. To maintain the priority system, the element
     * used for the request is removed.
     */

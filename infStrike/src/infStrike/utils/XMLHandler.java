@@ -34,7 +34,7 @@ public class XMLHandler extends DefaultHandler {
     private static final int LASTCHARS_INITIAL_CAPACITY = 1024 ;
     private StringBuffer lastCharacters = new StringBuffer(LASTCHARS_INITIAL_CAPACITY) ;
 
-    private ArrayList xmlCol ;
+    private ArrayList<Object> xmlCol ;
     private String[][] UnitValues = new String[2][16];
     private String[][] MapValues = new String[2][3];
     private String[][] ForestValues = new String[2][4];

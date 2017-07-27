@@ -90,7 +90,7 @@ public class dialogForceChoose extends JDialog {
         setSize(260, 140);
         setResizable(false);
         pack();
-        show();   
+        setVisible(true);   
     }
 
     /**
