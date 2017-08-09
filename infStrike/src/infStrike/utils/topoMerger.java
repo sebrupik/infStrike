@@ -1,11 +1,9 @@
 package infStrike.utils;
 
 import java.util.ArrayList;
-import java.awt.*;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.*;
-import java.awt.geom.Line2D.Double;
 import java.util.*;
 import java.util.HashMap;
 
@@ -13,7 +11,8 @@ public class topoMerger {
     private int pointsX, pointsY, gridSize;
     private int[][] topoValues;
     private ArrayList<Polygon> tmpPolyAl;
-    private ArrayList topoVec, topoColourVec;
+    private ArrayList topoVec;
+    private ArrayList<String> topoColourVec;
     private Polygon tmpPoly1, tmpPoly2;
     private Rectangle tmpRect;
     private String tmpStr;
@@ -23,7 +22,7 @@ public class topoMerger {
     * NB. when adding graphical items to topoVec, be aware that any type can be used.
     * Just remember to change a few lines in the draw method of 'topoObj'.
     */
-    public topoMerger(int arg1, int arg2, int arg3, int[][] arg4, ArrayList arg5, ArrayList arg6) {
+    public topoMerger(int arg1, int arg2, int arg3, int[][] arg4, ArrayList arg5, ArrayList<String> arg6) {
         pointsX = arg1;
         pointsY = arg2;
         gridSize = arg3;
@@ -98,20 +97,21 @@ public class topoMerger {
         }
     }
 
-    private void bigSmasher(Hashtable<String, ArrayList> topoHash) {
-        ArrayList v;
-        ArrayList indexes;      
+    private void bigSmasher(HashMap<String, ArrayList> topoHash) {
+        ArrayList<Polygon> v;
+        ArrayList<Polygon> indexes;      
         String str;
         Polygon poly1, poly2;
         int[] sharedLine;
         //Iterator it;
 
-        for (Enumeration e = topoHash.keys(); e.hasMoreElements();) {
-            str = (String)e.nextElement();
-            v = topoHash.get(str);
-            indexes = new Vector();
+        //for (Enumeration e = topoHash.keys(); e.hasMoreElements();) {
+        for(String ele : topoHash.keySet()) {
+            //str = (String)e.nextElement();
+            v = topoHash.get(ele);
+            indexes = new ArrayList<>();
             //for (int i=0; i<v.size(); i++) {
-            for(Iterator it = (Iterator)v.elements(); it.hasNext();) {
+            for(Iterator it = (Iterator)v.iterator(); it.hasNext();) {
                 poly1 = (Polygon)it.next();
 
 
@@ -135,7 +135,7 @@ public class topoMerger {
                 v.removeAll(indexes);
 
                 topoVec.add(poly1);
-                topoColourVec.add(str);
+                topoColourVec.add(ele);
             }
         }
     }
@@ -148,11 +148,12 @@ public class topoMerger {
     * of elements/polygons that have been added. A polygon would then be checked that it is not a memeber
     * of this list before being added. This means the tmpVec need never be messed with.
     */ 
-    private void bigSmasherOld(Hashtable<String, ArrayList> topoHash) {
+    private void bigSmasherOld(HashMap<String, ArrayList> topoHash) {
         int[] sharedLine;   
-        for (Enumeration e = topoHash.keys(); e.hasMoreElements();) {
-            tmpStr = (String)e.nextElement();
-            tmpPolyAl = topoHash.get(tmpStr);
+        //for (Enumeration e = topoHash.keys(); e.hasMoreElements();) {
+        for(String ele : topoHash.keySet()) {
+            //tmpStr = (String)e.nextElement();
+            tmpPolyAl = topoHash.get(ele);
             //System.out.println("----------------------------------------------------");
             //System.out.println("--------Merging polys with height "+tmpStr+"--------");
             //System.out.println("----------------------------------------------------");

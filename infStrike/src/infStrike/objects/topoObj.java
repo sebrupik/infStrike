@@ -2,15 +2,11 @@ package infStrike.objects;
 
 import infStrike.utils.topoMerger;
 
-import java.awt.*;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.Polygon;
-//import java.awt.geom.*;
 import java.io.*;
-import java.util.Vector;
-//import java.util.*;
+import java.util.ArrayList;
 
 public class topoObj {
     private int pointsX;
@@ -20,8 +16,8 @@ public class topoObj {
     private int maxTopoHeight;
     private double topoPercent;
 
-    private Vector topoVec;
-    private Vector topoColourVec;
+    private ArrayList<Polygon> topoVec;
+    private ArrayList<String> topoColourVec;
     //private Vector tmpVec;
     private Polygon tmpPoly1;
 
@@ -54,8 +50,8 @@ public class topoObj {
     }
 
     public void topomerge() {
-        topoVec = new Vector();
-        topoColourVec = new Vector();
+        topoVec = new ArrayList<>();
+        topoColourVec = new ArrayList<>();
         tMerger = new topoMerger(pointsX, pointsY, gridSize, topoValues, topoVec, topoColourVec);
         tMerger.topomerge();
         tMerger = null;
@@ -67,15 +63,15 @@ public class topoObj {
     * with their neighbours if they are of the same height. The draw method then draws
     * all the polygons in the Vector. This SHOULD give a fairly significant performance 
     * boost (depending on the hit incurred from using polygons).
-    * If I cannot solve the lag experienced on big maps as a result ot drawing the topography
+    * If I cannot solve the lag experienced on big maps as a result of drawing the topography
     * I may consider dropping it all together.
     * This is a last resort. (11/7/02)
     */
     public void draw(Graphics g) {
         if (topoVec != null) {
             for (int i=0; i<topoVec.size(); i++) {
-                tmpPoly1 = (Polygon)topoVec.elementAt(i);
-                g.setColor(new Color(120, 200, (int)(255-(topoPercent*Integer.parseInt((String)topoColourVec.elementAt(i))))));
+                tmpPoly1 = topoVec.get(i);
+                g.setColor(new Color(120, 200, (int)(255-(topoPercent*Integer.parseInt(topoColourVec.get(i))))));
                 g.fillPolygon(tmpPoly1);
                 //g.drawPolygon(tmpPoly1);
             }

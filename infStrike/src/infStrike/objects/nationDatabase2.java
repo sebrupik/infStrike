@@ -13,8 +13,6 @@ package infStrike.objects;
 */
 
 import infStrike.utils.jarCustomExtractor;
-import infStrike.utils.WeaponClassLoader;
-import infStrike.utils.NationClassLoader;
 
 import java.util.ArrayList;
 import java.net.*;
@@ -109,7 +107,7 @@ public class nationDatabase2 {
     * Used in class gui/weaponInfo
     */
     public String[] getAllWeaponNames() {
-        tmpVec = new ArrayList<weapFile>();
+        tmpVec = new ArrayList<>();
         for (int i=0; i<allWeapons.size(); i++) {
             tmpWeapFile = allWeapons.get(i);
             tmpVec.add(tmpWeapFile.getName());

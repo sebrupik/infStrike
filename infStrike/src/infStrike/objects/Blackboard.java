@@ -109,10 +109,10 @@ public class Blackboard {
         ArrayList<AIMission> aL;
 
         if (ht.containsKey(mission.getType())) {
-            aL = (ArrayList) ht.get(mission.getType());
+            aL = ht.get(mission.getType());
             aL.add(mission);
         } else {
-            aL = new ArrayList();
+            aL = new ArrayList<>();
             aL.add(mission);
             ht.put(mission.getType(), aL);
         }
