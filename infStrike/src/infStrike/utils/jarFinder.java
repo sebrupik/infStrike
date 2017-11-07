@@ -50,8 +50,10 @@ public class jarFinder {
         this._CLASS = this.getClass().getName();
 
         this.setText("Begining JAR loading", 0.0);
-        loadNationJars();
-        loadWeaponJars();
+        //loadNationJars();
+        loadJars(new File("weapons"), "gun", jarsWeapons);
+        //loadWeaponJars();
+        loadJars(new File("nations"), "nat", jarsNations);
         loadNations();
         loadWeapons();
         sortWeapons();
@@ -116,6 +118,7 @@ public class jarFinder {
 //** find the JAR URLs **
 //***********************
 
+    /*
     private void loadWeaponJars() {
         System.out.println(_CLASS+"/loadWeaponJars - initialising");
         this.setText("Begining Weapon JAR loading", 16.0);
@@ -130,32 +133,34 @@ public class jarFinder {
         jarsNations = new ArrayList<>();
         loadJars(root, jarsNations);
     }
-
+*/
     /**
     * Doesn't really load the JARs merely finds and stores their URLs
     */
-    private void loadJars(File arg1, ArrayList<URL> arg2) {
-        System.out.println(_CLASS+"/loadJars - initialising");
+    private void loadJars(File arg1, String file_prefix, ArrayList<URL> arg3) {
+        System.out.println(_CLASS+"/loadJars - initialising: "+file_prefix);
         if (arg1.exists()) {
             String[] files = arg1.list();
             if (files != null) {
                 tmpInt = proInc/files.length;
                 value = curPro.getValue();
                 for (int i = 0; i < files.length; i++) {
+                    //System.out.println(files[i]);
                     /*try {
                         Thread.sleep(300);
                     } catch (InterruptedException e) {
                         System.out.println(e);
                     }*/
                     File file = new File(arg1,files[i]);
-                    if (!file.isDirectory() && file.getName().toLowerCase().endsWith(".jar")) {
+                    // System.out.println(!file.isDirectory()+" "+file.getName().startsWith(file_prefix)+" "+file.getName().toLowerCase().endsWith(".jar"));
+                    if (!file.isDirectory() && file.getName().startsWith(file_prefix) && file.getName().toLowerCase().endsWith(".jar")) {
                         this.setText("JAR file "+file+" found", value);
                         try {
                             value += tmpInt;
                             System.out.println("tmpInt value "+tmpInt);
                             if (checkJars(file.toURI().toURL())) {
                                 this.setText("JAR file "+file+" is valid", value);
-                                arg2.add(file.toURI().toURL());
+                                arg3.add(file.toURI().toURL());
                             }
                             else {
                                 this.setText("JAR file "+file+" is NOT valid!", value);
@@ -177,9 +182,9 @@ public class jarFinder {
     private void loadWeapons() {
         System.out.println(_CLASS+"/loadWeapons - initialising");
         this.setText("Preparing to load weapon classes", 48.0);
-        //URL[] urls = new URL[jarsWeapons.size()];
+        URL[] urls = new URL[jarsWeapons.size()];
         //jarsWeapons.copyInto(urls);
-        URL[] urls = (URL[])jarsWeapons.toArray();
+        urls = (URL[])jarsWeapons.toArray(urls);
         for (int i=0; i<urls.length; i++) {
             System.out.println("in the urls variable : "+urls[i]);
         }
@@ -191,9 +196,9 @@ public class jarFinder {
     private void loadNations() {
         System.out.println(_CLASS+"/loadNations - initialising");
         this.setText("Preparing to load nation classes", 32.0);
-        //URL[] urls = new URL[jarsNations.size()];
+        URL[] urls = new URL[jarsNations.size()];
         //jarsNations.copyInto(urls);
-        URL[] urls = (URL[])jarsNations.toArray();
+        urls = jarsNations.toArray(urls);
         
         for (int i=0; i<urls.length; i++) {
             System.out.println("in the urls variable : "+urls[i]);
@@ -213,10 +218,10 @@ public class jarFinder {
     private void sortWeapons() {
         System.out.println(_CLASS+"/sortWeapons - initialising xxxxxxxxx");
         this.setText("Sorting weapons.", 64.0);
-        //URL[] urls = new URL[jarsWeapons.size()];
+        URL[] urls = new URL[jarsWeapons.size()];
         //jarsWeapons.copyInto(urls);
         
-        URL[] urls = (URL[])jarsWeapons.toArray();
+        urls = (URL[])jarsWeapons.toArray(urls);
         String[] str1, str2;
         for (int i=0; i<urls.length; i++) {
             jEx = new jarCustomExtractor(urls[i]);

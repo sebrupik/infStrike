@@ -65,6 +65,8 @@ public class frameSetup2 extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE) ;
         Container contentPane = getContentPane();
 
+        
+        mainPanel = new JPanel();
 
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();  

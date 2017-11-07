@@ -102,9 +102,9 @@ public abstract class nationFile2 {
         //weapPri = (String[])tmpPri.toArray();
         
         //tmpSec.add(0, "Empty");
-        //weapSec = new String[tmpSec.size()];
+        weapSec = new String[tmpSec.size()];
         //tmpSec.copyInto(weapSec);
-        weapSec = (String[])tmpSec.toArray();
+        weapSec = (String[])tmpSec.toArray(weapSec);
 
         weapPri = new String[tmpPri.size()+1];
         weaponUser = new String[tmpPri.size()+1];

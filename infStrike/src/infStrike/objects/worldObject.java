@@ -79,8 +79,8 @@ public class worldObject {
     }
 
     public void update(double time) {
-        System.out.println("*********************************************************");
-        System.out.println(time);
+        //System.out.println("*********************************************************");
+        //System.out.println(time);
         //System.out.println("*********************************************************");
         ArrayList v;
         //System.out.println("************** platoons");
@@ -112,7 +112,7 @@ public class worldObject {
 
 
     /**
-    * Returns the nearset base to an agent
+    * Returns the nearest base to an agent
     * N.B!!!!!!!!!! if there are no bases left there is going to be a BIG problem!
     */
     public Base getNearestBase(Agent arg1) {

@@ -1,18 +1,15 @@
 package infStrike.gui;
 
-import infStrike.objects.infBasic;
 import infStrike.objects.worldObject;
 import infStrike.utils.Vec2;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import java.awt.image.VolatileImage;
-import java.util.Vector;
 
 public class frameArenaRenderer2 extends Frame {
     Canvas canvas;
@@ -56,7 +53,7 @@ public class frameArenaRenderer2 extends Frame {
         setSize(400, 400);
         setBackground(Color.black);
         addWindowListener(new WindowAdapter() {
-	    public void windowClosing(WindowEvent e) {
+	   @Override public void windowClosing(WindowEvent e) {
                 System.exit(0);
             }
         });
@@ -73,31 +70,19 @@ public class frameArenaRenderer2 extends Frame {
         leftPanel.setBackground(Color.black); rightPanel.setBackground(Color.black); 
         // ***************** left panel
         dmPanel.setBackground(Color.black);
-        lBut1.setBackground(Color.black); lBut1.setForeground(Color.white); //lBut1.setBorderPainted(false);
-        lBut2.setBackground(Color.black); lBut2.setForeground(Color.white); //lBut2.setBorderPainted(false);
-        lBut3.setBackground(Color.black); lBut3.setForeground(Color.white); //lBut3.setBorderPainted(false);
-        lBut4.setBackground(Color.black); lBut4.setForeground(Color.white);
 
         //changeDMButY.setBackground(Color.black); //changeDMButY.setForeground(Color.white); //changeDMButY.setBorderPainted(false);
         //changeDMButN.setBackground(Color.black); //changeDMButN.setForeground(Color.white); //changeDMButN.setBorderPainted(false);
         //resBox.setBackground(Color.black); //resBox.setForeground(Color.white); //resBox.setBorderPainted(false);
+        leftPanel.add(buttonColourAdjust(lBut1, Color.white, Color.black)); 
+        leftPanel.add(buttonColourAdjust(lBut2, Color.white, Color.black));
+        leftPanel.add(buttonColourAdjust(lBut3, Color.white, Color.black));
+        leftPanel.add(buttonColourAdjust(lBut4, Color.white, Color.black));
 
-        // ***************** right panel
-        rBut1.setBackground(Color.black); rBut1.setForeground(Color.white); //rBut1.setBorderPainted(false);
-        rBut2.setBackground(Color.black); rBut2.setForeground(Color.white); //rBut2.setBorderPainted(false);
-        rBut3.setBackground(Color.black); rBut3.setForeground(Color.white); //rBut3.setBorderPainted(false);
-        rBut4.setBackground(Color.black); rBut4.setForeground(Color.white); //rBut4.setBorderPainted(false);
-
-
-        leftPanel.add(lBut1);
-        leftPanel.add(lBut2);
-        leftPanel.add(lBut3);
-        leftPanel.add(lBut4);
-
-        rightPanel.add(rBut1);
-        rightPanel.add(rBut2);
-        rightPanel.add(rBut3);
-        rightPanel.add(rBut4);
+        rightPanel.add(buttonColourAdjust(rBut1, Color.white, Color.black));
+        rightPanel.add(buttonColourAdjust(rBut2, Color.white, Color.black));
+        rightPanel.add(buttonColourAdjust(rBut3, Color.white, Color.black));
+        rightPanel.add(buttonColourAdjust(rBut4, Color.white, Color.black));
 
         //dmPanel.add(changeDMButY);
         //dmPanel.add(changeDMButN);
@@ -124,48 +109,40 @@ public class frameArenaRenderer2 extends Frame {
         //tp.add("Config", cfgPanel);
 
         //**************listeners
-        lBut1.addActionListener(new ActionListener() {  //platoon info
-            public void actionPerformed(ActionEvent e) {
-                canvas.setPlatoonDraw();
-            }
+        //platoon info
+        lBut1.addActionListener((ActionEvent e) -> {
+            canvas.setPlatoonDraw();
         }); 
-        lBut2.addActionListener(new ActionListener() {  //base info
-            public void actionPerformed(ActionEvent e) {
-                canvas.setBaseDraw();
-            }
+        //base info
+        lBut2.addActionListener((ActionEvent e) -> {
+            canvas.setBaseDraw();
         }); 
-        lBut3.addActionListener(new ActionListener() {  //AI info
-            public void actionPerformed(ActionEvent e) {
-                AISideDraw = canvas.setAIDraw(AISideDraw);
-                if (AISideDraw == -1)
-                    lBut3.setLabel("AI Info : None"); 
-                else 
-                    lBut3.setLabel("AI Info : "+AISideDraw);
-            }
+        //AI info
+        lBut3.addActionListener((ActionEvent e) -> {
+            AISideDraw = canvas.setAIDraw(AISideDraw);
+            if (AISideDraw == -1)
+                lBut3.setLabel("AI Info : None");
+            else
+                lBut3.setLabel("AI Info : "+AISideDraw);
         }); 
-        lBut4.addActionListener(new ActionListener() {  //unit info
-            public void actionPerformed(ActionEvent e) {
-                canvas.setAgentDraw();
-            }
+        //unit info
+        lBut4.addActionListener((ActionEvent e) -> {
+            canvas.setAgentDraw();
         }); 
-        rBut1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //pause the game 
-                if(canvas.isRunningMove()) {
-                    rBut1.setLabel("Start");
-                    canvas.stopMove();
-                } else {
-                    rBut1.setLabel("Stop");
-                    canvas.startMove();
-                }
+        rBut1.addActionListener((ActionEvent e) -> {
+            //pause the game
+            if(canvas.isRunningMove()) {
+                rBut1.setLabel("Start");
+                canvas.stopMove();
+            } else {
+                rBut1.setLabel("Stop");
+                canvas.startMove();
             }
         });
 
 
-        rBut4.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
+        rBut4.addActionListener((ActionEvent e) -> {
+            dispose();
         });
 
         //changeDMButY.setEnabled(device.isDisplayChangeSupported());
@@ -192,6 +169,12 @@ public class frameArenaRenderer2 extends Frame {
         });*/
     }
 
+    private Button buttonColourAdjust(Button but, Color fore, Color back) {
+        but.setForeground(fore); rBut4.setBackground(back); //but.setBorderPainted(false)
+        
+        return but;
+    }
+    
     public void begin() {
         isFullScreen = device.isFullScreenSupported();
         setUndecorated(isFullScreen);
@@ -270,16 +253,16 @@ class Canvas extends Panel implements ActionListener {
         double lastx = 0.0;
         double lasty = 0.0;
         
-        public void mousePressed(MouseEvent e) {
+        @Override public void mousePressed(MouseEvent e) {
             lastx = e.getX();
             lasty = e.getY();
         }
 
-        public void mouseMoved(MouseEvent e) { 
+        @Override public void mouseMoved(MouseEvent e) { 
             //do nothing 
         }
         
-        public void mouseDragged(MouseEvent e) {
+        @Override public void mouseDragged(MouseEvent e) {
 	    double dy = e.getY() - lasty;
             
             if ((e.getModifiers() & e.BUTTON1_MASK)!=0) {
@@ -321,7 +304,7 @@ class Canvas extends Panel implements ActionListener {
         start();
     }
 
-    synchronized public void paint(Graphics g) {
+    @Override synchronized public void paint(Graphics g) {
         super.paintComponents(g); 
         g2 = (Graphics2D)g;
         initOffscreen();
@@ -373,7 +356,7 @@ class Canvas extends Panel implements ActionListener {
         }
     }
 
-    public void actionPerformed(ActionEvent event) {
+    @Override public void actionPerformed(ActionEvent event) {
         Timer t = (Timer)event.getSource();
         time += 0.25;
         if(t == moveTimer) { world.update(time); }
@@ -397,7 +380,7 @@ class Canvas extends Panel implements ActionListener {
     public boolean isRunning() { return moveTimer.isRunning() && drawTimer.isRunning(); }
 
 
-    public void update(Graphics g) { paint(g); }
+    @Override public void update(Graphics g) { paint(g); }
     public void setPlatoonDraw() { platoonDraw = !platoonDraw; }
     public void setBaseDraw() { baseDraw = !baseDraw; }
     public void setAgentDraw() { agentDraw = !agentDraw; }

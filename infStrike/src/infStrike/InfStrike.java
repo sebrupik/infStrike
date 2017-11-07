@@ -3,7 +3,6 @@ package infStrike;
 //import game.infStrike.gui.dialogStart;
 import infStrike.gui.splash;
 
-
 import javax.swing.*;
 
 public class InfStrike {

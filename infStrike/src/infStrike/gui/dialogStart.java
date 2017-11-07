@@ -25,9 +25,9 @@ public class dialogStart extends JFrame {
     public dialogStart(nationDatabase2 arg1) {
         int picChoose = (int)(Math.random() * 2);
         if (picChoose == 0)
-            imgLbl = new JLabel(new ImageIcon("game/infStrike/images/infSplash1.jpg"));
+            imgLbl = new JLabel(new ImageIcon(getClass().getResource("/infStrike/images/infSplash1.jpg")));
         if (picChoose == 1)
-            imgLbl = new JLabel(new ImageIcon("game/infStrike/images/infSplash2.jpg"));
+            imgLbl = new JLabel(new ImageIcon(getClass().getResource("/infStrike/images/infSplash2.jpg")));
 
         /*String p1 = getClass().getResource( "infSplash1.jpg" ).getPath();
         String p2 = getClass().getResource( "infSplash2.jpg" ).getPath();

@@ -113,9 +113,9 @@ public class nationDatabase2 {
             tmpVec.add(tmpWeapFile.getName());
         }
         //return (String[])tmpVec.toArray();
-        //tmpStrAr = new String[tmpVec.size()];
+        tmpStrAr = new String[tmpVec.size()];
         //tmpVec.copyInto(tmpStrAr);
-        tmpStrAr = (String[])tmpVec.toArray();
+        tmpStrAr = (String[])tmpVec.toArray(tmpStrAr);
         java.util.Arrays.sort(tmpStrAr);  //sorts the array alphabeticaly
         return tmpStrAr;
     }

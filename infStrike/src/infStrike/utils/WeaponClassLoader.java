@@ -25,7 +25,8 @@ public final class WeaponClassLoader extends URLClassLoader {
             try {
                 jarLoader = URLClassLoader.newInstance(new URL[]{url});
                 System.out.println("JARloader trying : "+jarLoader.getURLs()[0].toString());
-                runtimeObject = jarLoader.loadClass(name+"/"+name).newInstance();
+                //runtimeObject = jarLoader.loadClass(name+"/"+name).newInstance();
+                runtimeObject = jarLoader.loadClass(name+"."+name).newInstance();
             } catch (Exception e) {
                 System.err.println("Stinking error : "+e);
             }
